@@ -21,7 +21,7 @@ class Carnet
     private \DateTime $dateCarnet;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photoCarnet = null;
+    private ?string $photo = null;
 
     public function getId(): ?int
     {
@@ -52,14 +52,14 @@ class Carnet
         return $this;
     }
 
-    public function getPhotoCarnet(): ?string
+    public function getPhoto(): ?string
     {
-        return $this->photoCarnet;
+        return $this->photo;
     }
 
-    public function setPhotoCarnet(?string $photoCarnet): static
+    public function setPhoto(?string $photo): static
     {
-        $this->photoCarnet = $photoCarnet;
+        $this->photo = $photo;
 
         return $this;
     }

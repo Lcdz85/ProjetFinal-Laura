@@ -25,7 +25,7 @@ Après avoir configuré la connexion dans le fichier .env
 # Rajouter les packages pour l'ORM
 
 symfony composer req symfony/orm-pack
-symfony composer req symfony/maker-bundle -- dev
+symfony composer req symfony/maker-bundle --dev
 ```
 ```
 # Lancer la création de la BD
