@@ -16,6 +16,8 @@ User créateur d'un carnet : permission admin
 
 User autorisé à le voir : permission visiteur
 
+ajout API JavaScript Google Maps pour localisation
+
 
 
 

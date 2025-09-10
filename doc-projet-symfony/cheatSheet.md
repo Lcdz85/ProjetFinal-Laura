@@ -18,9 +18,9 @@ git remote remove origin    effacer repo
 ```
 
 ## Symfony
-```
-apres avoir configuré la connexion dans le fichier .env
-```
+
+Après avoir configuré la connexion dans le fichier .env
+
 ```
 # Rajouter les packages pour l'ORM
 
