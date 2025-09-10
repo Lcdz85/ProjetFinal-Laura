@@ -42,5 +42,5 @@ symfony console make:entity
 # Créer une migration, la lancer
 
 symfony console make:migration
-symfony doctrine migration:migrate
+symfony console doctrine:migration:migrate
 ```
