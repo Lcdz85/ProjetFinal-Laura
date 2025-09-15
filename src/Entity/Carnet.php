@@ -25,10 +25,6 @@ class Carnet
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
-    #[ORM\OneToOne(inversedBy: 'carnet', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Permission $permission = null;
-
     /**
      * @var Collection<int, Invitation>
      */
@@ -84,18 +80,6 @@ class Carnet
     public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
-
-        return $this;
-    }
-
-    public function getPermission(): ?Permission
-    {
-        return $this->permission;
-    }
-
-    public function setPermission(Permission $permission): static
-    {
-        $this->permission = $permission;
 
         return $this;
     }

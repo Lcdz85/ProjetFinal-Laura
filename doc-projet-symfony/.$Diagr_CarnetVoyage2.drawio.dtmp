@@ -88,7 +88,7 @@
         <mxCell id="DPrh9CP8y8HEwpQaaEh8-36" value="&lt;font style=&quot;color: rgb(103, 171, 159);&quot;&gt;ID : int&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#B1B3EA,#EDEDED);" parent="DPrh9CP8y8HEwpQaaEh8-35" vertex="1">
           <mxGeometry y="26" width="100" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="DPrh9CP8y8HEwpQaaEh8-37" value="&lt;span&gt;admin : boolean&lt;/span&gt;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=0" parent="DPrh9CP8y8HEwpQaaEh8-35" vertex="1">
+        <mxCell id="DPrh9CP8y8HEwpQaaEh8-37" value="&lt;span&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;admin : boolean&lt;/font&gt;&lt;/span&gt;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=0" parent="DPrh9CP8y8HEwpQaaEh8-35" vertex="1">
           <mxGeometry y="52" width="100" height="26" as="geometry" />
         </mxCell>
         <mxCell id="DPrh9CP8y8HEwpQaaEh8-38" value="&lt;i&gt;carnetID : int&lt;/i&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#b3b3c1, #ededed);" parent="DPrh9CP8y8HEwpQaaEh8-35" vertex="1">
