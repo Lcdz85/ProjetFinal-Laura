@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CarnetRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +24,21 @@ class Carnet
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
+
+    #[ORM\OneToOne(inversedBy: 'carnet', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Permission $permission = null;
+
+    /**
+     * @var Collection<int, Invitation>
+     */
+    #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'carnet', orphanRemoval: true)]
+    private Collection $invitations;
+
+    public function __construct()
+    {
+        $this->invitations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +77,48 @@ class Carnet
     public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getPermission(): ?Permission
+    {
+        return $this->permission;
+    }
+
+    public function setPermission(Permission $permission): static
+    {
+        $this->permission = $permission;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invitation>
+     */
+    public function getInvitations(): Collection
+    {
+        return $this->invitations;
+    }
+
+    public function addInvitation(Invitation $invitation): static
+    {
+        if (!$this->invitations->contains($invitation)) {
+            $this->invitations->add($invitation);
+            $invitation->setCarnet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvitation(Invitation $invitation): static
+    {
+        if ($this->invitations->removeElement($invitation)) {
+            // set the owning side to null (unless already changed)
+            if ($invitation->getCarnet() === $this) {
+                $invitation->setCarnet(null);
+            }
+        }
 
         return $this;
     }

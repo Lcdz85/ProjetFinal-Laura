@@ -16,6 +16,9 @@ class Permission
     #[ORM\Column]
     private ?bool $admin = null;
 
+    #[ORM\OneToOne(mappedBy: 'permission', cascade: ['persist', 'remove'])]
+    private ?Carnet $carnet = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,6 +32,23 @@ class Permission
     public function setAdmin(bool $admin): static
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function getCarnet(): ?Carnet
+    {
+        return $this->carnet;
+    }
+
+    public function setCarnet(Carnet $carnet): static
+    {
+        // set the owning side of the relation if necessary
+        if ($carnet->getPermission() !== $this) {
+            $carnet->setPermission($this);
+        }
+
+        $this->carnet = $carnet;
 
         return $this;
     }
