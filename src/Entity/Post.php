@@ -32,6 +32,9 @@ class Post
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $longitude = null;
 
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    private ?Carnet $carnet = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class Post
     public function setLongitude(?string $longitude): static
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getCarnet(): ?Carnet
+    {
+        return $this->carnet;
+    }
+
+    public function setCarnet(?Carnet $carnet): static
+    {
+        $this->carnet = $carnet;
 
         return $this;
     }
