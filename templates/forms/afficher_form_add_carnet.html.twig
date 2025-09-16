@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FormsController!{% endblock %}
+
+{% block body %}
+
+<h3>TEST</h3>
+
+    {{ form_start (carnetForm) }}
+
+
+    {{ form_widget (carnetForm)}}
+    <input type="submit" value="Insert">
+
+    {{ form_end (carnetForm)}}
+
+{% endblock %}
