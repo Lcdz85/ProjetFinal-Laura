@@ -44,3 +44,22 @@ symfony console make:entity
 symfony console make:migration
 symfony console doctrine:migration:migrate
 ```
+## Fixtures
+```
+# Installez le support pour les fixtures
+
+symfony composer req --dev orm-fixtures
+
+# Création des fixtures
+
+symfony console make:fixture
+
+# Ajouter faker
+
+composer require fakerphp/faker
+
+# Remplir la DB avec les fixtures
+
+symfony console doctrine:fixtures:load
+```
+
