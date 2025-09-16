@@ -6,7 +6,6 @@ use App\Entity\Carnet;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Validator\Constraints\Length;
 
 class CarnetFixtures extends Fixture
 {
@@ -30,6 +29,9 @@ class CarnetFixtures extends Fixture
                    ->setPhoto($photo);
 
             $manager->persist($carnet);
+
+            // Ajoutez cette ligne pour créer une référence au carnet
+            $this->addReference('carnet_' . $i, $carnet);
         }
 
         $manager->flush();
