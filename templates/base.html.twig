@@ -12,6 +12,12 @@
         {% endblock %}
     </head>
     <body>
+        <header>
+            <h3>{%if (app.user) %}
+                    {{app.user.email}}
+                {% endif %}</h3>
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        </header>
         {% block body %}{% endblock %}
     </body>
 </html>
