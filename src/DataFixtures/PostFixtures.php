@@ -32,6 +32,9 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
                  ->setCarnet($faker->randomElement($carnets));
             
             $manager->persist($post);
+
+            // Ajoutez cette ligne pour créer une référence au post
+            $this->addReference('post_' . $i, $post);
         }
 
         $manager->flush();
