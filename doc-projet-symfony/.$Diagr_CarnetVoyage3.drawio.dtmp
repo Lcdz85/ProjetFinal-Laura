@@ -319,7 +319,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-1" value="&lt;b&gt;invitation&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="485" y="370" width="130" height="182" as="geometry" />
+          <mxGeometry x="485" y="370" width="130" height="208" as="geometry" />
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-2" value="&lt;font style=&quot;color: rgb(103, 171, 159);&quot;&gt;ID&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#B1B3EA,#EDEDED);" parent="GCua5Fq3nQ2hytk0qEWT-1" vertex="1">
           <mxGeometry y="26" width="130" height="26" as="geometry" />
@@ -338,6 +338,9 @@
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-6" value="&lt;i&gt;carnetID&lt;/i&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#b3b3c1, #ededed);" parent="GCua5Fq3nQ2hytk0qEWT-1" vertex="1">
           <mxGeometry y="156" width="130" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YaFe3xC0GjgK_wLFTPE9-1" value="&lt;i&gt;carnetID&lt;/i&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#b3b3c1, #ededed);" vertex="1" parent="GCua5Fq3nQ2hytk0qEWT-1">
+          <mxGeometry y="182" width="130" height="26" as="geometry" />
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-7" value="" style="endArrow=none;endFill=0;endSize=12;html=1;rounded=0;exitX=0.371;exitY=0.987;exitDx=0;exitDy=0;entryX=1.008;entryY=0.269;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;edgeStyle=orthogonalEdgeStyle;curved=1;strokeColor=#4C0099;" parent="1" source="DPrh9CP8y8HEwpQaaEh8-22" target="g9DMTw4ti7qzn2aEX8xU-1" edge="1">
           <mxGeometry width="160" relative="1" as="geometry">
