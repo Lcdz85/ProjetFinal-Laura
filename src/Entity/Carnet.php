@@ -37,6 +37,10 @@ class Carnet
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet')]
     private Collection $posts;
 
+    #[ORM\ManyToOne(inversedBy: 'carnetsCrees')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $utilisateur = null;
+
     public function __construct()
     {
         $this->invitations = new ArrayCollection();
@@ -140,6 +144,18 @@ class Carnet
                 $post->setCarnet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

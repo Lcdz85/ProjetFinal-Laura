@@ -21,19 +21,18 @@ class UtilisateurFixtures extends Fixture
     {
         $faker = Factory::create('fr_BE');
         
-        for ($i=0; $i<5; $i++) {
+        for ($i=1; $i<=5; $i++) {
             $utilisateur = new Utilisateur();
             $utilisateur->setEmail('user' . $i . '@gmail.com');
             $utilisateur->setNom('nom'.$i);
             $utilisateur->setDateNaissance($faker->dateTimeBetween('-80 year', '-18 year'));
             // $utilisateur->setRoles();
-            $utilisateur->setPassword($this->hasher->hashPassword(
-                 $utilisateur,
-                 'lePassword'.$i
-            ));
+            $utilisateur->setPassword($this->hasher->hashPassword($utilisateur,'lePassword'.$i));
+            $this->addReference('user' . $i, $utilisateur);
 
              $manager->persist($utilisateur);
         }
+
         $manager->flush();
     }
 }

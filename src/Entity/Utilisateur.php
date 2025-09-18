@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -39,6 +41,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateNaissance = null;
+
+    /**
+     * @var Collection<int, Carnet>
+     */
+    #[ORM\OneToMany(targetEntity: Carnet::class, mappedBy: 'utilisateur', orphanRemoval: true)]
+    private Collection $carnetsCrees;
+
+    public function __construct()
+    {
+        $this->carnetsCrees = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -144,4 +157,35 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Carnet>
+     */
+    public function getCarnetsCrees(): Collection
+    {
+        return $this->carnetsCrees;
+    }
+
+    public function addCarnetsCree(Carnet $carnetsCree): static
+    {
+        if (!$this->carnetsCrees->contains($carnetsCree)) {
+            $this->carnetsCrees->add($carnetsCree);
+            $carnetsCree->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarnetsCree(Carnet $carnetsCree): static
+    {
+        if ($this->carnetsCrees->removeElement($carnetsCree)) {
+            // set the owning side to null (unless already changed)
+            if ($carnetsCree->getUtilisateur() === $this) {
+                $carnetsCree->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
 }
