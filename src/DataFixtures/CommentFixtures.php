@@ -9,14 +9,15 @@ use App\Entity\Comment;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class CommentFixtures extends Fixture
+
+class CommentFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_BE');
-        $photo = "https://picsum.photos/800/600?random=" . rand(200, 500);
-        // Récupérer tous les carnets
+        
         $carnets = $manager->getRepository(Carnet::class)->findAll();
 
         for ($i=0; $i<25; $i++)
@@ -25,7 +26,7 @@ class CommentFixtures extends Fixture
 
             $comment->setDateComment($faker->dateTimeBetween('-2 year', 'now'))
                  ->setTexte($faker->text(rand(50,200)))
-                 ->setPost($this->getReference($post));
+                 ->setPost($this->getReference("post_". $i, Post::class));
             
             $manager->persist($comment);
 
@@ -33,5 +34,12 @@ class CommentFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+    
+    public function getDependencies():array
+    {
+        return [
+            PostFixtures::class,
+        ];
     }
 }
