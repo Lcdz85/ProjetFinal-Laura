@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\Post;
 use App\Entity\Carnet;
 use Faker\Factory;
-// use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class PostFixtures extends Fixture implements DependentFixtureInterface
 {
