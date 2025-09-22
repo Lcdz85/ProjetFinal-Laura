@@ -37,10 +37,20 @@ class Carnet
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet')]
     private Collection $posts;
 
+    #[ORM\ManyToOne(inversedBy: 'carnetsCrees')]
+    private ?Utilisateur $utilisateur = null;
+
+    /**
+     * @var Collection<int, Utilisateur>
+     */
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'carnetsAcces')]
+    private Collection $usersAcces;
+
     public function __construct()
     {
         $this->invitations = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->usersAcces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,6 +149,45 @@ class Carnet
             if ($post->getCarnet() === $this) {
                 $post->setCarnet(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getUsersAcces(): Collection
+    {
+        return $this->usersAcces;
+    }
+
+    public function addUsersAcce(Utilisateur $usersAcce): static
+    {
+        if (!$this->usersAcces->contains($usersAcce)) {
+            $this->usersAcces->add($usersAcce);
+            $usersAcce->addCarnetsAcce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersAcce(Utilisateur $usersAcce): static
+    {
+        if ($this->usersAcces->removeElement($usersAcce)) {
+            $usersAcce->removeCarnetsAcce($this);
         }
 
         return $this;

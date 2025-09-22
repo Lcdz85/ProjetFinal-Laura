@@ -30,6 +30,9 @@ class Invitation
     #[ORM\JoinColumn(nullable: false)]
     private ?Carnet $carnet = null;
 
+    #[ORM\ManyToOne(inversedBy: 'invitations')]
+    private ?Utilisateur $utilisateur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class Invitation
     public function setCarnet(?Carnet $carnet): static
     {
         $this->carnet = $carnet;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
