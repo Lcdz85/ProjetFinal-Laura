@@ -23,9 +23,6 @@ class Invitation
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateInvite = null;
 
-    #[ORM\Column]
-    private ?bool $actif = null;
-
     #[ORM\ManyToOne(inversedBy: 'invitations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Carnet $carnet = null;
@@ -70,18 +67,6 @@ class Invitation
     public function setDateInvite(\DateTime $dateInvite): static
     {
         $this->dateInvite = $dateInvite;
-
-        return $this;
-    }
-
-    public function isActif(): ?bool
-    {
-        return $this->actif;
-    }
-
-    public function setActif(bool $actif): static
-    {
-        $this->actif = $actif;
 
         return $this;
     }
