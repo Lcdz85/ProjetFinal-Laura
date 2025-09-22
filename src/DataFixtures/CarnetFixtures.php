@@ -18,7 +18,7 @@ class CarnetFixtures extends Fixture
                         "Chroniques de ",
                         "À la découverte de ",];
         
-        for ($i=0; $i<10; $i++)
+        for ($i=1; $i<=12; $i++)
         {
             $lieu = $faker->boolean() ? $faker->unique()->city() : $faker->unique()->country();
             $photo = "https://picsum.photos/800/600?random=" . rand(1, 200);

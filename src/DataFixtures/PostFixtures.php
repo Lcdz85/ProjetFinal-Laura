@@ -19,7 +19,7 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
         // Récupérer tous les carnets
         $carnets = $manager->getRepository(Carnet::class)->findAll();
 
-        for ($i=0; $i<25; $i++)
+        for ($i=1; $i<=30; $i++)
         {
             $post = new Post();
 

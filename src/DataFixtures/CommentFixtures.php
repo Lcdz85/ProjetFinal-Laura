@@ -20,14 +20,16 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
         
         $carnets = $manager->getRepository(Carnet::class)->findAll();
 
-        for ($i=0; $i<25; $i++)
+        for ($i=1; $i<=60; $i++)
         {
             $comment = new Comment();
 
             $comment->setDateComment($faker->dateTimeBetween('-2 year', 'now'))
-                 ->setTexte($faker->text(rand(50,200)))
-                 ->setPost($this->getReference("post_". $i, Post::class));
+                 ->setTexte($faker->text(rand(30,150)))
+                 ->setPost($this->getReference("post_". rand(1,30), Post::class));
             
+            $this->addReference("comment_" . $i, $comment);
+
             $manager->persist($comment);
 
     

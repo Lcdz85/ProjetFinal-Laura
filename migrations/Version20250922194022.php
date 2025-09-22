@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250922171715 extends AbstractMigration
+final class Version20250922194022 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,7 +22,7 @@ final class Version20250922171715 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE carnet (id INT AUTO_INCREMENT NOT NULL, utilisateur_id INT DEFAULT NULL, titre VARCHAR(100) NOT NULL, date_carnet DATE NOT NULL, photo VARCHAR(255) DEFAULT NULL, INDEX IDX_576D2650FB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE comment (id INT AUTO_INCREMENT NOT NULL, post_id INT NOT NULL, utilisateur_id INT DEFAULT NULL, date_comment DATETIME NOT NULL, texte LONGTEXT NOT NULL, INDEX IDX_9474526C4B89032C (post_id), INDEX IDX_9474526CFB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE invitation (id INT AUTO_INCREMENT NOT NULL, carnet_id INT NOT NULL, utilisateur_id INT DEFAULT NULL, email VARCHAR(255) NOT NULL, token VARCHAR(100) NOT NULL, date_invite DATE NOT NULL, actif TINYINT(1) NOT NULL, INDEX IDX_F11D61A2FA207516 (carnet_id), INDEX IDX_F11D61A2FB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE invitation (id INT AUTO_INCREMENT NOT NULL, carnet_id INT NOT NULL, utilisateur_id INT DEFAULT NULL, email VARCHAR(255) NOT NULL, token VARCHAR(100) NOT NULL, date_invite DATE NOT NULL, INDEX IDX_F11D61A2FA207516 (carnet_id), INDEX IDX_F11D61A2FB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE post (id INT AUTO_INCREMENT NOT NULL, carnet_id INT DEFAULT NULL, titre VARCHAR(255) NOT NULL, date_post DATETIME NOT NULL, texte LONGTEXT DEFAULT NULL, photo VARCHAR(255) DEFAULT NULL, latitude NUMERIC(10, 7) DEFAULT NULL, longitude NUMERIC(10, 7) DEFAULT NULL, INDEX IDX_5A8A6C8DFA207516 (carnet_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE utilisateur (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(180) NOT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, email VARCHAR(255) DEFAULT NULL, photo VARCHAR(255) DEFAULT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (username), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE utilisateur_carnet (utilisateur_id INT NOT NULL, carnet_id INT NOT NULL, INDEX IDX_36C01CDBFB88E14F (utilisateur_id), INDEX IDX_36C01CDBFA207516 (carnet_id), PRIMARY KEY(utilisateur_id, carnet_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
