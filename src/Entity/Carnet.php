@@ -174,20 +174,20 @@ class Carnet
         return $this->usersAcces;
     }
 
-    public function addUsersAcce(Utilisateur $usersAcce): static
+    public function addUserAcces(Utilisateur $userAcces): static
     {
-        if (!$this->usersAcces->contains($usersAcce)) {
-            $this->usersAcces->add($usersAcce);
-            $usersAcce->addCarnetsAcce($this);
+        if (!$this->usersAcces->contains($userAcces)) {
+            $this->usersAcces->add($userAcces);
+            $userAcces->addCarnetAcces($this);
         }
 
         return $this;
     }
 
-    public function removeUsersAcce(Utilisateur $usersAcce): static
+    public function removeUserAcces(Utilisateur $userAcces): static
     {
-        if ($this->usersAcces->removeElement($usersAcce)) {
-            $usersAcce->removeCarnetsAcce($this);
+        if ($this->usersAcces->removeElement($userAcces)) {
+            $userAcces->removeCarnetAcces($this);
         }
 
         return $this;

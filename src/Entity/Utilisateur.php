@@ -228,11 +228,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->carnetsCrees;
     }
 
-    public function addCarnetsCree(Carnet $carnetsCree): static
+    public function addCarnetCree(Carnet $carnetCree): static
     {
-        if (!$this->carnetsCrees->contains($carnetsCree)) {
-            $this->carnetsCrees->add($carnetsCree);
-            $carnetsCree->setUtilisateur($this);
+        if (!$this->carnetsCrees->contains($carnetCree)) {
+            $this->carnetsCrees->add($carnetCree);
+            $carnetCree->setUtilisateur($this);
         }
 
         return $this;
@@ -258,18 +258,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->carnetsAcces;
     }
 
-    public function addCarnetsAcce(Carnet $carnetsAcce): static
+    public function addCarnetAcces(Carnet $carnetAcces): static
     {
-        if (!$this->carnetsAcces->contains($carnetsAcce)) {
-            $this->carnetsAcces->add($carnetsAcce);
+        if (!$this->carnetsAcces->contains($carnetAcces)) {
+            $this->carnetsAcces->add($carnetAcces);
         }
 
         return $this;
     }
 
-    public function removeCarnetsAcce(Carnet $carnetsAcce): static
+    public function removeCarnetAcces(Carnet $carnetAcces): static
     {
-        $this->carnetsAcces->removeElement($carnetsAcce);
+        $this->carnetsAcces->removeElement($carnetAcces);
 
         return $this;
     }

@@ -2,6 +2,8 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Utilisateur;
+
 use App\Entity\Carnet;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -27,6 +29,7 @@ class CarnetFixtures extends Fixture
             $carnet->setTitre($modeleTitres[rand(0,count($modeleTitres)-1)] . $lieu)
                    ->setDateCarnet($faker->dateTimeBetween('-2 year', 'now'))
                    ->setPhoto($photo);
+                   
 
             $manager->persist($carnet);
 

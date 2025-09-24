@@ -2,19 +2,17 @@
 
 
 
-Un utilisateur s'enregistre sur l'application et créer un carnet de voyage dans lequel il pourra poster des messages, des photos et sa localisation.
+Un utilisateur s'enregistre sur l'application et créer un carnet de voyage dans lequel il pourra ajouter des messages avec photos et localisation (Posts)
 
 Il peut partager son carnet.
 
-Les invités peuvent laisser commentaires et likes sur les posts de son carnet.
+Les utilisateurs avec qui il aura partagé son carnet pourront laisser commentaires et likes sur les posts.
 
-(Sur la page d'accueil de son carnet, une carte indique chaque localisation)
+Sur la page d'accueil de son carnet, une carte indique chaque localisation,  
 
 Accès au post depuis le fil des posts ( ou depuis un point sur la carte)
 
-User créateur d'un carnet : permission admin
-
-User autorisé à le voir : permission visiteur
+Un invité inscrit sur le site peut voir, liké et laisser des commentaires, un invité non-inscrit ne peut que voir le carnet.
 
 ajout API JavaScript Google Maps pour localisation
 
@@ -34,7 +32,7 @@ ajout API JavaScript Google Maps pour localisation
 
 &nbsp;	Lien INSCRIPTION
 
-&nbsp;	(Carte avec toutes les localisations des posts pointés)
+&nbsp;	(Carte avec la localisation de tous les posts de l'application, non cliquables)
 
 
 
@@ -44,7 +42,7 @@ ajout API JavaScript Google Maps pour localisation
 
 ---------------------------------
 
-&nbsp;	Formulaire (Nom – email – password – photo)
+&nbsp;	Formulaire (Username – email – password – photo)
 
 &nbsp;		\*Après inscription -> page PROFIL
 
@@ -56,7 +54,7 @@ ajout API JavaScript Google Maps pour localisation
 
 -----------------------------
 
-&nbsp;	Créer un nouveau carnet de voyage : lien CREATION
+&nbsp;	Créer un nouveau carnet de voyage : lien CREATION CARNET
 
 &nbsp;	Mes carnets de voyage : Vue des différents carnets (clic -> page CARNET)
 
@@ -74,7 +72,7 @@ ajout API JavaScript Google Maps pour localisation
 
 ----------------------------------------
 
-&nbsp;	Formulaire (Titre - Ajout photos)
+&nbsp;	Formulaire (Titre - Ajout localisation et photos)
 
  		\*-> Page CARNET
 
@@ -86,13 +84,11 @@ ajout API JavaScript Google Maps pour localisation
 
 ----------------------
 
-&nbsp;	Ajouter nouveau post : lien POST
+&nbsp;	Ajouter nouveau post : lien CREATION POST
 
- 		\*visible uniquement par l’admin
+ 		\*visible uniquement par le créateur
 
-&nbsp;	(Carte pointée)
-
-&nbsp;	Vue des posts
+&nbsp;	Vue des posts	(Carte pointée depuis icône carte sur les posts)
 
 &nbsp;	•	Ajout de like et commentaire au post
 
@@ -100,7 +96,7 @@ ajout API JavaScript Google Maps pour localisation
 
 
 
-### **Page POST**
+### **Page CREATION POST**
 
 ------------------
 

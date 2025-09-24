@@ -26,21 +26,44 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_BE');
+        
+        $allCarnets = range(1, 12);
+        shuffle($allCarnets);
 
-        for ($i=1; $i<=5; $i++)
+        for ($i = 1; $i <= 5; $i++) 
         {
             $utilisateur = new Utilisateur();
             $utilisateur->setUsername($faker->unique()->userName)
                         ->setEmail($faker->unique()->freeEmail)
                         ->setPhoto("https://i.pravatar.cc/300?u=".$i)
                         ->setPassword($this->hasher->hashPassword($utilisateur, 'Password'.$i));
+            
+            // Carnets créés par l'utilisateur
+            $creesRefs = array_splice($allCarnets, 0, rand(0,5));
+            foreach ($creesRefs as $ref) {
+                $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
+                $utilisateur->addCarnetCree($carnet); 
+                $carnet->setUtilisateur($utilisateur);
+            }
+            // 2) Carnets accessibles (≠ carnets créés)
+            $carnetsRestants = array_diff($allCarnets, $creesRefs);
+            shuffle($carnetsRestants);
+            $NonCreesRefs = array_slice($carnetsRestants, 0, rand(0,3));
+            foreach ($NonCreesRefs as $ref) {
+                $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
+                $utilisateur->addCarnetAcces($carnet);
+                $carnet->addUserAcces($utilisateur);
+            }
 
             $this->addReference('user_' . $i, $utilisateur);
-
+            
             $manager->persist($utilisateur);
-        }     
+            $manager->persist($carnet);
+        }
 
         $manager->flush();
+
+
     }
 
     public function getDependencies(): array

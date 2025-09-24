@@ -260,7 +260,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-1" value="&lt;b&gt;invitation&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="339" y="70" width="130" height="182" as="geometry" />
+          <mxGeometry x="339" y="100" width="130" height="182" as="geometry" />
         </mxCell>
         <mxCell id="GCua5Fq3nQ2hytk0qEWT-2" value="&lt;font style=&quot;&quot;&gt;ID&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=light-dark(#CCCCCC,#EDEDED);" parent="GCua5Fq3nQ2hytk0qEWT-1" vertex="1">
           <mxGeometry y="26" width="130" height="26" as="geometry" />
