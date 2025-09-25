@@ -14,8 +14,11 @@ class InvitationFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_BE');
+
         for ($i = 1; $i <= 5; $i++) {
+
             $token = $faker->regexify('[A-Za-z0-9]{50}');
+
             $user = $this->getReference("user_" . rand(1, count($manager->getRepository(Utilisateur::class)->findAll())), Utilisateur::class);
 
             $invitation = new Invitation();
@@ -30,11 +33,14 @@ class InvitationFixtures extends Fixture implements DependentFixtureInterface
                 $carnet = $usersCarnets[rand(0,count($usersCarnets)-1)];
                 $invitation->setCarnet($carnet);
                 $carnet->addInvitation($invitation);
+                
+                $manager->persist($carnet);
             }
 
             $this->addReference('invite_' . $i, $invitation);
 
             $manager->persist($invitation);
+            
         }
 
         $manager->flush();

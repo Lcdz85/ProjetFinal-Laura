@@ -36,9 +36,19 @@ class Comment
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'likedComments')]
     private Collection $usersLikes;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'Comments')]
+    private ?self $parent = null;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    private Collection $Comments;
+
     public function __construct()
     {
         $this->usersLikes = new ArrayCollection();
+        $this->Comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +126,48 @@ class Comment
     {
         if ($this->usersLikes->removeElement($userLike)) {
             $userLike->removeLikedComment($this);
+        }
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getComments(): Collection
+    {
+        return $this->Comments;
+    }
+
+    public function addComment(self $comment): static
+    {
+        if (!$this->Comments->contains($comment)) {
+            $this->Comments->add($comment);
+            $comment->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(self $comment): static
+    {
+        if ($this->Comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getParent() === $this) {
+                $comment->setParent(null);
+            }
         }
 
         return $this;

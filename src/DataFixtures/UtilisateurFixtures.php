@@ -59,7 +59,7 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
                 for($r=0; $r <= rand(0,count($posts)-1); $r++) {
                     $post = $posts[$r];
                     $utilisateur->addLikedPost($post);
-                    $post->addUsersLike($utilisateur);
+                    $post->addUserLike($utilisateur);
                 }
             }
             
