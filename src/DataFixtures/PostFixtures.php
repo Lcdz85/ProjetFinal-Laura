@@ -2,22 +2,19 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Post;
+
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-
-use App\Entity\Post;
-use App\Entity\Carnet;
 use Faker\Factory;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class PostFixtures extends Fixture implements DependentFixtureInterface
+class PostFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_BE');
         $photo = "https://picsum.photos/800/600?random=" . rand(200, 500);
-        // Récupérer tous les carnets
-        $carnets = $manager->getRepository(Carnet::class)->findAll();
+        
 
         for ($i=1; $i<=30; $i++)
         {
@@ -28,8 +25,7 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
                  ->setTexte($faker->text(rand(50,200)))
                  ->setPhoto($photo)
                  ->setLatitude($faker->latitude())
-                 ->setLongitude($faker->longitude())
-                 ->setCarnet($faker->randomElement($carnets));
+                 ->setLongitude($faker->longitude());
             
             $manager->persist($post);
 
@@ -38,12 +34,5 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->flush();
-    }
-
-    public function getDependencies():array
-    {
-        return [
-            CarnetFixtures::class,
-        ];
     }
 }

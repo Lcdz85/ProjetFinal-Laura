@@ -34,16 +34,16 @@ class Carnet
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet')]
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet', cascade: ['persist'])]
     private Collection $posts;
 
-    #[ORM\ManyToOne(inversedBy: 'carnetsCrees')]
+    #[ORM\ManyToOne(inversedBy: 'carnetsCrees', cascade: ['persist'])]
     private ?Utilisateur $utilisateur = null;
 
     /**
      * @var Collection<int, Utilisateur>
      */
-    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'carnetsAcces')]
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'carnetsAcces', cascade: ['persist'])]
     private Collection $usersAcces;
 
     public function __construct()

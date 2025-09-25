@@ -4,9 +4,6 @@ namespace App\DataFixtures;
 
 use App\Entity\Utilisateur;
 use App\Entity\Carnet;
-use App\Entity\Post;
-use App\Entity\Comment;
-use App\Entity\Invitation;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -45,34 +42,37 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
                 $utilisateur->addCarnetCree($carnet); 
                 $carnet->setUtilisateur($utilisateur);
             }
-            // 2) Carnets accessibles (≠ carnets créés)
+            // Carnets accessibles (≠ carnets créés)
             $carnetsRestants = array_diff($allCarnets, $creesRefs);
             shuffle($carnetsRestants);
-            $NonCreesRefs = array_slice($carnetsRestants, 0, rand(0,3));
-            foreach ($NonCreesRefs as $ref) {
+            $carnetsAccesRefs = array_slice($carnetsRestants, 0, rand(0,3));
+            foreach ($carnetsAccesRefs as $ref) {
                 $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
                 $utilisateur->addCarnetAcces($carnet);
                 $carnet->addUserAcces($utilisateur);
             }
 
-            $this->addReference('user_' . $i, $utilisateur);
+            // Posts likés
+            $carnetsAcces= $utilisateur->getCarnetsAcces();
+            foreach ($carnetsAcces as $carnet) {
+                $posts = $carnet->getPosts();
+                for($r=0; $r <= rand(0,count($posts)-1); $r++) {
+                    $post = $posts[$r];
+                    $utilisateur->addLikedPost($post);
+                    $post->addUsersLike($utilisateur);
+                }
+            }
             
-            $manager->persist($utilisateur);
-            $manager->persist($carnet);
+            $this->addReference('user_' . $i, $utilisateur);
         }
 
         $manager->flush();
-
-
     }
 
     public function getDependencies(): array
     {
         return [
             CarnetFixtures::class,
-            PostFixtures::class,
-            CommentFixtures::class,
-            InvitationFixtures::class,
         ];
     }
 }

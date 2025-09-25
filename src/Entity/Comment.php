@@ -22,11 +22,12 @@ class Comment
     #[ORM\Column(type: Types::TEXT)]
     private ?string $texte = null;
 
-    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentsCrees')]
+    #[ORM\ManyToOne(inversedBy: 'commentsCrees', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Utilisateur $utilisateur = null;
 
     /**
@@ -101,20 +102,20 @@ class Comment
         return $this->usersLikes;
     }
 
-    public function addUsersLike(Utilisateur $usersLike): static
+    public function addUserLike(Utilisateur $userLike): static
     {
-        if (!$this->usersLikes->contains($usersLike)) {
-            $this->usersLikes->add($usersLike);
-            $usersLike->addLikedComment($this);
+        if (!$this->usersLikes->contains($userLike)) {
+            $this->usersLikes->add($userLike);
+            $userLike->addLikedComment($this);
         }
 
         return $this;
     }
 
-    public function removeUsersLike(Utilisateur $usersLike): static
+    public function removeUserLike(Utilisateur $userLike): static
     {
-        if ($this->usersLikes->removeElement($usersLike)) {
-            $usersLike->removeLikedComment($this);
+        if ($this->usersLikes->removeElement($userLike)) {
+            $userLike->removeLikedComment($this);
         }
 
         return $this;

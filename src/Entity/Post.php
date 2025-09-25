@@ -46,7 +46,7 @@ class Post
     /**
      * @var Collection<int, Utilisateur>
      */
-    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'likedPosts')]
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'likedPosts', cascade:['persist'])]
     private Collection $usersLikes;
 
     public function __construct()
@@ -182,20 +182,20 @@ class Post
         return $this->usersLikes;
     }
 
-    public function addUsersLike(Utilisateur $usersLike): static
+    public function addUserLike(Utilisateur $userLike): static
     {
-        if (!$this->usersLikes->contains($usersLike)) {
-            $this->usersLikes->add($usersLike);
-            $usersLike->addLikedPost($this);
+        if (!$this->usersLikes->contains($userLike)) {
+            $this->usersLikes->add($userLike);
+            $userLike->addLikedPost($this);
         }
 
         return $this;
     }
 
-    public function removeUsersLike(Utilisateur $usersLike): static
+    public function removeUserLike(Utilisateur $userLike): static
     {
-        if ($this->usersLikes->removeElement($usersLike)) {
-            $usersLike->removeLikedPost($this);
+        if ($this->usersLikes->removeElement($userLike)) {
+            $userLike->removeLikedPost($this);
         }
 
         return $this;

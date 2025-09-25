@@ -42,37 +42,37 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Invitation>
      */
-    #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'utilisateur')]
+    #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'utilisateur', cascade: ['persist'])]
     private Collection $invitations;
 
     /**
      * @var Collection<int, Carnet>
      */
-    #[ORM\OneToMany(targetEntity: Carnet::class, mappedBy: 'utilisateur')]
+    #[ORM\OneToMany(targetEntity: Carnet::class, mappedBy: 'utilisateur', cascade: ['persist'])]
     private Collection $carnetsCrees;
 
     /**
      * @var Collection<int, Carnet>
      */
-    #[ORM\ManyToMany(targetEntity: Carnet::class, inversedBy: 'usersAcces')]
+    #[ORM\ManyToMany(targetEntity: Carnet::class, inversedBy: 'usersAcces', cascade: ['persist'])]
     private Collection $carnetsAcces;
 
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'usersLikes')]
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'usersLikes', cascade: ['persist'])]
     private Collection $likedPosts;
 
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'utilisateur')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'utilisateur', cascade: ['persist'])]
     private Collection $commentsCrees;
 
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\ManyToMany(targetEntity: Comment::class, inversedBy: 'usersLikes')]
+    #[ORM\ManyToMany(targetEntity: Comment::class, inversedBy: 'usersLikes', cascade: ['persist'])]
     private Collection $likedComments;
 
     public function __construct()
@@ -238,12 +238,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeCarnetsCree(Carnet $carnetsCree): static
+    public function removeCarnetCree(Carnet $carnetCree): static
     {
-        if ($this->carnetsCrees->removeElement($carnetsCree)) {
+        if ($this->carnetsCrees->removeElement($carnetCree)) {
             // set the owning side to null (unless already changed)
-            if ($carnetsCree->getUtilisateur() === $this) {
-                $carnetsCree->setUtilisateur(null);
+            if ($carnetCree->getUtilisateur() === $this) {
+                $carnetCree->setUtilisateur(null);
             }
         }
 
@@ -306,22 +306,22 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->commentsCrees;
     }
 
-    public function addCommentsCree(Comment $commentsCree): static
+    public function addCommentCree(Comment $commentCree): static
     {
-        if (!$this->commentsCrees->contains($commentsCree)) {
-            $this->commentsCrees->add($commentsCree);
-            $commentsCree->setUtilisateur($this);
+        if (!$this->commentsCrees->contains($commentCree)) {
+            $this->commentsCrees->add($commentCree);
+            $commentCree->setUtilisateur($this);
         }
 
         return $this;
     }
 
-    public function removeCommentsCree(Comment $commentsCree): static
+    public function removeCommentCree(Comment $commentCree): static
     {
-        if ($this->commentsCrees->removeElement($commentsCree)) {
+        if ($this->commentsCrees->removeElement($commentCree)) {
             // set the owning side to null (unless already changed)
-            if ($commentsCree->getUtilisateur() === $this) {
-                $commentsCree->setUtilisateur(null);
+            if ($commentCree->getUtilisateur() === $this) {
+                $commentCree->setUtilisateur(null);
             }
         }
 
