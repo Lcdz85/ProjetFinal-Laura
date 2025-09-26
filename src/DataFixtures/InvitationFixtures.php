@@ -23,9 +23,9 @@ class InvitationFixtures extends Fixture implements DependentFixtureInterface
 
             $invitation = new Invitation();
             $invitation->setEmail($faker->email())
-                ->setToken($token)
-                ->setDateInvite($faker->dateTimeBetween('-2 year', 'now'))
-                ->setUtilisateur($user);
+                        ->setToken($token)
+                        ->setDateInvite($faker->dateTimeBetween('-2 year', 'now'))
+                        ->setUtilisateur($user);
             $user->addInvitation($invitation);
             
             $usersCarnets = $user->getCarnetsCrees()->toArray();

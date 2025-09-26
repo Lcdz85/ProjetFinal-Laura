@@ -1,5 +1,5 @@
 @echo off
-echo Ce script va effacer la DB, la reinitialise et la remplit avec des données de test (fixtures)
+echo Ce script efface la DB, la reinitialise et la remplit avec des donnees de test (fixtures)
 
 symfony console doctrine:database:drop --force
 symfony console doctrine:database:create

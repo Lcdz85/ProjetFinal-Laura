@@ -28,7 +28,7 @@ class Carnet
     /**
      * @var Collection<int, Invitation>
      */
-    #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'carnet', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'carnet', orphanRemoval: true, cascade: ['persist'])]
     private Collection $invitations;
 
     /**

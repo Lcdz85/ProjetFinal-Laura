@@ -72,7 +72,7 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            CarnetFixtures::class,
+            PostFixtures::class,
         ];
     }
 }
