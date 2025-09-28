@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h2>Carnets créés</h2>
+    {% for carnet in carnetsCrees %}
+        <li>{{carnet.titre}}</li>
+        {{carnet.dateCarnet|date('d/m/Y')}}
+        <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+    {% endfor %}
+</div>
+
+<div class="example-wrapper">
+    <h2>Carnets accessibles</h2>
+    {% for carnet in carnetsAcces %}
+        <li>{{carnet.titre}}</li>
+        {{carnet.dateCarnet|date('d/m/Y')}}
+        <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+    {% endfor %}
+</div>
+
+{% endblock %}

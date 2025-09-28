@@ -33,8 +33,9 @@
                 <label for="_remember_me">Se souvenir de moi</label>
             </div>
 
-        <input type="button" value="S'inscrire">
-        
+            <input type="button" value="S'inscrire" class="btn btn-secondary" onclick="window.location.href='{{ path('app_register') }}'">
+            <a href="{{ path('app_register') }}" class="btn btn-secondary">S'inscrire</a>
+
 
     </form>
 {% endblock %}

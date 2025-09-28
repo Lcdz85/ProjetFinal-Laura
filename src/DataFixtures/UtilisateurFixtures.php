@@ -41,6 +41,8 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
                 $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
                 $utilisateur->addCarnetCree($carnet); 
                 $carnet->setUtilisateur($utilisateur);
+
+                $manager->persist($carnet);
             }
             // Carnets accessibles (≠ carnets créés)
             $carnetsRestants = array_diff($allCarnets, $creesRefs);
@@ -50,16 +52,20 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
                 $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
                 $utilisateur->addCarnetAcces($carnet);
                 $carnet->addUserAcces($utilisateur);
+
+                $manager->persist($carnet);
             }
 
             // Posts likés
             $carnetsAcces= $utilisateur->getCarnetsAcces();
             foreach ($carnetsAcces as $carnet) {
-                $posts = $carnet->getPosts();
-                for($r=0; $r <= rand(0,count($posts)-1); $r++) {
-                    $post = $posts[$r];
-                    $utilisateur->addLikedPost($post);
-                    $post->addUserLike($utilisateur);
+                $posts = $carnet->getPosts()->toArray();
+                if (count($posts)>0) {
+                    for($r=0; $r <= rand(0,count($posts)-1); $r++) {
+                        $post = $posts[$r];
+                        $utilisateur->addLikedPost($post);
+                        $post->addUserLike($utilisateur);
+                    }
                 }
             }
             
@@ -73,6 +79,8 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             PostFixtures::class,
+            CarnetFixtures::class,
+
         ];
     }
 }
