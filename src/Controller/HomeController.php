@@ -57,7 +57,7 @@ final class HomeController extends AbstractController
         {
             $em->persist($carnet);
             $em->flush();
-            return $this->redirectToRoute('page_afficher_carnets');
+            return $this->redirectToRoute('page_afficher_carnet');
         } 
         else 
         {
@@ -66,14 +66,14 @@ final class HomeController extends AbstractController
         }
     }
 
-    #[Route('/afficher/carnets', name: 'page_afficher_carnets')]
-    public function afficherAllCarnets(EntityManagerInterface $em)
+    #[Route('/afficher/carnet/{id}', name: 'page_afficher_carnet')]
+    public function afficherCarnet(EntityManagerInterface $em, $id)
     {
        $rep = $em->getRepository(Carnet::class);
-       $carnets = $rep->findAll();
+       $carnet = $rep->findBy(['id' => $id]);
 
-       $vars = ['carnets' => $carnets];
+       $vars = ['carnet' => $carnet];
 
-       return $this->render('forms/afficher_carnets.html.twig', $vars);
+       return $this->render('forms/afficher_carnet.html.twig', $vars);
     }
 }
