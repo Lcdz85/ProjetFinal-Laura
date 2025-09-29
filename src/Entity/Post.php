@@ -35,6 +35,7 @@ class Post
     private ?string $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Carnet $carnet = null;
 
     /**

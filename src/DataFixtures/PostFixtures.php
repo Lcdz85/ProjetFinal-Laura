@@ -3,12 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\Post;
+use App\Entity\Carnet;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class PostFixtures extends Fixture
+class PostFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -26,6 +28,12 @@ class PostFixtures extends Fixture
                  ->setPhoto($photo)
                  ->setLatitude($faker->latitude())
                  ->setLongitude($faker->longitude());
+
+            // Associer un Carnet existant (créé par CarnetFixtures)
+            $carnets = $manager->getRepository(Carnet::class)->findAll();
+            $carnet = $carnets[array_rand($carnets)];
+            $post->setCarnet($carnet);
+
             
             $manager->persist($post);
 
@@ -34,5 +42,12 @@ class PostFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            CarnetFixtures::class,
+        ];
     }
 }

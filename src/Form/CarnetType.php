@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class CarnetType extends AbstractType
 {
@@ -14,8 +15,13 @@ class CarnetType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class)
-            ->add('photo', TextType::class)
-        ;
+            ->add('photo', FileType::class, [
+                'label' => "Sélectionner une photo de couverture",
+                'mapped' => false, 
+                    // cette propriété ne sera pas affecté dans l'entité quand on envoie le formulaire. On la récuperera avec $form['photo']->getData()
+                'required' => false 
+                    // l'utilisateur n'est pas obligé d'uploader un fichier
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

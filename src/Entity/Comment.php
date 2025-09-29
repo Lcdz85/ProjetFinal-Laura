@@ -33,22 +33,22 @@ class Comment
     /**
      * @var Collection<int, Utilisateur>
      */
-    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'likedComments')]
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'likedComments', cascade: ['persist'])]
     private Collection $usersLikes;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'Comments')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'comments', cascade: ['persist'])]
     private ?self $parent = null;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
-    private Collection $Comments;
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist'])]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->usersLikes = new ArrayCollection();
-        $this->Comments = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,13 +148,13 @@ class Comment
      */
     public function getComments(): Collection
     {
-        return $this->Comments;
+        return $this->comments;
     }
 
     public function addComment(self $comment): static
     {
-        if (!$this->Comments->contains($comment)) {
-            $this->Comments->add($comment);
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
             $comment->setParent($this);
         }
 
@@ -163,7 +163,7 @@ class Comment
 
     public function removeComment(self $comment): static
     {
-        if ($this->Comments->removeElement($comment)) {
+        if ($this->comments->removeElement($comment)) {
             // set the owning side to null (unless already changed)
             if ($comment->getParent() === $this) {
                 $comment->setParent(null);
