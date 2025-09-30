@@ -6,6 +6,7 @@ use App\Entity\Carnet;
 use App\Form\CarnetType;
 use App\Entity\Post;    
 use App\Form\PostType;  
+// use App\Form\PhotoType;     // add
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,10 +55,6 @@ final class HomeController extends AbstractController
         $carnetForm = $this->createForm(CarnetType::class, $carnet);
 
         $carnetForm->handleRequest($req);
-
-        
-
-
         
         if ($carnetForm->isSubmitted() && $carnetForm->isValid())
         {
@@ -94,11 +91,17 @@ final class HomeController extends AbstractController
         $post->setDatePost(new \DateTime());
         $post->setCarnet($carnet);
         $postForm = $this->createForm(PostType::class, $post);
+        // $photoForm = $this->createForm(PhotoType::class, $post);    //add
+
+        
 
         $postForm->handleRequest($req);
+        // $photoForm->handleRequest($req);        // add
 
-        if ($postForm->isSubmitted())
+        if ($postForm->isSubmitted() && $postForm->isValid())
         {
+
+            // dd($post);
             $em->persist($post);
             $em->flush();
             return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);

@@ -19,8 +19,8 @@ class PhotoFixtures extends Fixture implements DependentFixtureInterface
             $photo = new Photo();
 
             //$url = 'https://picsum.photos/800/600?random=' . (200 + $i);
-            $url = 'lien' . $i;
-            $photo->setLien($url);
+            $url = 'imageFile' . $i;
+            $photo->setImageFile($url);
 
             // Link to a random existing Post by reference
             
