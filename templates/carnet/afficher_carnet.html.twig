@@ -20,7 +20,9 @@
         {% for post in carnet.posts %}
             <li>{{post.datePost|date('d/m/Y')}}</li>
             <h4>{{post.titre}}</h4>
-            <img src="{{ post.photo }}" alt="Photo du post" width="150">
+            {% for photo in post.photos %}
+                <img src="{{ photo.lien }}" alt="Photo du post" width="150">
+            {% endfor %}
             {% if post.comments is not empty %}
                 <h6>Commentaires</h6>
                 {% for comment in post.comments %}

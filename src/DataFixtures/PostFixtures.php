@@ -25,7 +25,6 @@ class PostFixtures extends Fixture implements DependentFixtureInterface
             $post->setTitre($faker->sentence(rand(3, 6)))
                  ->setDatePost($faker->dateTimeBetween('-2 year', 'now'))
                  ->setTexte($faker->text(rand(50,200)))
-                 ->setPhoto($photo)
                  ->setLatitude($faker->latitude())
                  ->setLongitude($faker->longitude());
 
