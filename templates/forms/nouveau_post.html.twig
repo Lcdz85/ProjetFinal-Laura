@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau post{% endblock %}
+
+{% block body %}
+
+<h3>Nouveau post</h3>
+
+    {{ form_start (postForm) }}
+
+    {{ form_widget (postForm)}}       {# Les champs du formulaire #}
+    <input type="submit" value="Créer"> {# Le bouton submit du formulaire #}
+
+    {{ form_end (postForm)}}
+
+{% endblock %}

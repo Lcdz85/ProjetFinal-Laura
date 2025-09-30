@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Carnet;
 use App\Form\CarnetType;
+use App\Entity\Post;    
+use App\Form\PostType;  
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,27 +55,59 @@ final class HomeController extends AbstractController
 
         $carnetForm->handleRequest($req);
 
-        if ($carnetForm->isSubmitted())
+        
+
+
+        
+        if ($carnetForm->isSubmitted() && $carnetForm->isValid())
         {
+            // $objFichier contient toutes les donnees du fichier
+            $objFichier = $carnetForm['photo']->getData();
+
+            // $nom est juste un string
+            $nom = md5(uniqid()) . "." . $objFichier->guessExtension();
+            
+            // fixer le lien
+            $carnet->setPhoto($nom);
+
+            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads';
+            $objFichier->move($dossier, $nom);
+
             $em->persist($carnet);
             $em->flush();
-            return $this->redirectToRoute('page_afficher_carnet');
+            return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
+            
         } 
         else 
         {
             $vars = ['carnetForm' => $carnetForm];
-            return $this->render('forms/creer_carnet.html.twig', $vars);
+            return $this->render('forms/nouveau_carnet.html.twig', $vars);
         }
     }
 
-    #[Route('/afficher/carnet/{id}', name: 'page_afficher_carnet')]
-    public function afficherCarnet(EntityManagerInterface $em, $id)
+    #[Route('/home/nouveau_post/{id}', name: 'page_nouveau_post')]
+    public function afficherFormNouveauPost(Request $req, EntityManagerInterface $em, $id): Response
     {
-       $rep = $em->getRepository(Carnet::class);
-       $carnet = $rep->findBy(['id' => $id]);
+        $repo = $em->getRepository(Carnet::class);
+        $carnet =$repo->find($id);
+        $post = new Post();
+        $post->setDatePost(new \DateTime());
+        $post->setCarnet($carnet);
+        $postForm = $this->createForm(PostType::class, $post);
 
-       $vars = ['carnet' => $carnet];
+        $postForm->handleRequest($req);
 
-       return $this->render('forms/afficher_carnet.html.twig', $vars);
+        if ($postForm->isSubmitted())
+        {
+            $em->persist($post);
+            $em->flush();
+            return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
+        }
+        else
+        {
+            $vars = ['postForm' => $postForm];
+            return $this->render('forms/nouveau_post.html.twig', $vars);
+        }
+
     }
 }
