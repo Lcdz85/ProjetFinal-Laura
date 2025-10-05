@@ -25,9 +25,6 @@ class Post
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $texte = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photo = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $latitude = null;
 
@@ -53,7 +50,7 @@ class Post
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'post')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'post', cascade: ['persist', 'remove'])]
     private Collection $photos;
 
     public function __construct()
@@ -100,18 +97,6 @@ class Post
     public function setTexte(?string $texte): static
     {
         $this->texte = $texte;
-
-        return $this;
-    }
-
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(?string $photo): static
-    {
-        $this->photo = $photo;
 
         return $this;
     }

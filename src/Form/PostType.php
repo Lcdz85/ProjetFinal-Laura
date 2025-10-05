@@ -21,13 +21,13 @@ class PostType extends AbstractType
         $builder
             ->add('titre', TextType::class)
             ->add('texte', TextareaType::class)
-            // ->add('photos', CollectionType::class, [
-            //     'entry_type' => PhotoType::class,
-            //     'allow_add' => true,
-            //     'allow_delete' => true,
-            //     'by_reference' => false,
-            //     'label' => false,
-            // ]);
+            ->add('photos', CollectionType::class, [
+                'entry_type' => PhotoType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
+            ]);
 
             // ->add('latitude')
             // ->add('longitude')
