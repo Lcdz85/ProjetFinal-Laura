@@ -10,7 +10,11 @@
     
     <div class="example-wrapper">
         <h1>{{carnet.titre}}</h1>
-        <img src="/uploads/{{ carnet.photo }}" alt="Photo du carnet" width="100">
+        {% if carnet.photo starts with 'http' %}
+            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% else %}
+            <img src="{{ asset('uploads/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+        {% endif %}
         <p> par {{carnet.utilisateur.username}}</p>
         {{carnet.dateCarnet|date('d/m/Y')}}
     </div>
@@ -21,11 +25,15 @@
             <li>{{post.datePost|date('d/m/Y')}}</li>
             <h4>{{post.titre}}</h4>
             {% for photo in post.photos %}
-            {{ dump(photo.imageFile) }}
-                <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
+                {% if photo.imageFile starts with 'http' %}
+                    <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
+                {% else %}
+                    <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
+                {% endif %}
             {% endfor %}
+            <p>{{post.texte}}</p>
             {% if post.comments is not empty %}
-                <h6>Commentaires</h6>
+                <h5>Commentaires</h5>
                 {% for comment in post.comments %}
                     <div>
                         <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">

@@ -17,7 +17,11 @@
     <h2>Mes Carnets créés</h2>
     {% for carnet in carnetsCrees %}
         <li><h4>{{carnet.titre}}</h4></li>
-        <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% if carnet.photo starts with 'http' %}
+            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% else %}
+            <img src="{{ asset('uploads/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+        {% endif %}
         <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
         
         <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
@@ -30,7 +34,11 @@
     {% for comment in comments %}
         <div>
             <li><h4>{{comment.post.carnet.titre}}</h4></li>
-            <h6><img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
+            <h6>{% if comment.utilisateur.photo starts with 'http' %}
+            <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
+            {% else %}
+            <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="50">
+            {% endif %}
             {{comment.utilisateur.username}}</h6>
             <p>{{comment.dateComment|date('d/m/Y')}}
         <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}">Voir</a>
@@ -44,7 +52,11 @@
     {% for carnet in carnetsAcces %}
         <li><h4>{{carnet.titre}}</h4></li>
         {{carnet.dateCarnet|date('d/m/Y')}}
+        {% if carnet.photo starts with 'http' %}
         <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% else %}
+        <img src="{{ asset('uploads/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+        {% endif %}
         <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
 
     {% endfor %}
