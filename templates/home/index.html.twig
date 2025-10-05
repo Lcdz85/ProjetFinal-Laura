@@ -10,15 +10,20 @@
 </style>
 
 <div class="example-wrapper">
+ <input type="button" value="Nouveau carnet" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'"> 
+</div>
+
+<div class="example-wrapper">
     <h2>Mes Carnets créés</h2>
     {% for carnet in carnetsCrees %}
         <li><h4>{{carnet.titre}}</h4></li>
         <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
         <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
+        
+        <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
     {% endfor %}
 </div>
 
- <input type="button" value="Nouveau carnet" class="btn btn-secondary"{# onclick="window.location.href='{{ path('###') }}'"#}> 
 
 <div class="example-wrapper">
     <h2>Comments sur mes carnets</h2>
@@ -28,6 +33,8 @@
             <h6><img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
             {{comment.utilisateur.username}}</h6>
             <p>{{comment.dateComment|date('d/m/Y')}}
+        <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}">Voir</a>
+
         </div>
     {% endfor %}
 </div>
@@ -38,6 +45,8 @@
         <li><h4>{{carnet.titre}}</h4></li>
         {{carnet.dateCarnet|date('d/m/Y')}}
         <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
+
     {% endfor %}
 </div>
 
