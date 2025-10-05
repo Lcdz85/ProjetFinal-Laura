@@ -91,12 +91,8 @@ final class HomeController extends AbstractController
         $post->setDatePost(new \DateTime());
         $post->setCarnet($carnet);
         $postForm = $this->createForm(PostType::class, $post);
-        // $photoForm = $this->createForm(PhotoType::class, $post);    //add
-
         
-
         $postForm->handleRequest($req);
-        // $photoForm->handleRequest($req);        // add
 
         if ($postForm->isSubmitted() && $postForm->isValid())
         {
