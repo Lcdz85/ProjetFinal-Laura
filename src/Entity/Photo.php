@@ -27,6 +27,9 @@ class Photo
     #[ORM\ManyToOne(inversedBy: 'photos')]
     private ?Post $post = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,5 +57,19 @@ class Photo
         $this->post = $post;
 
         return $this;
+    }
+
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+
+        if ($file !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
     }
 }
