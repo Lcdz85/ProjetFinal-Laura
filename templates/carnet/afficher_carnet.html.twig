@@ -14,7 +14,7 @@
         {% if carnet.photo starts with 'http' %}
             <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
         {% else %}
-            <img src="{{ asset('uploads/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
         {% endif %}
         {#<p> par {{carnet.utilisateur.username}}</p>#}
         {{carnet.dateCarnet|date('d/m/Y')}}

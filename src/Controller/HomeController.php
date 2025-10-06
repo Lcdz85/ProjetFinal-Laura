@@ -67,7 +67,7 @@ final class HomeController extends AbstractController
             // fixer le lien
             $carnet->setPhoto($nom);
 
-            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads';
+            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
             $objFichier->move($dossier, $nom);
 
             $em->persist($carnet);
