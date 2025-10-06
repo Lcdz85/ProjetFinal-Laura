@@ -3,10 +3,11 @@
 {% block title %}{{carnet.titre}}{% endblock %}
 
 {% block body %}
-
+    {% if app.user == carnet.utilisateur %}
     <div class="example-wrapper">
         <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
     </div>
+    {% endif %}
     
     <div class="example-wrapper">
         <h1>{{carnet.titre}}</h1>
@@ -15,15 +16,15 @@
         {% else %}
             <img src="{{ asset('uploads/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
         {% endif %}
-        <p> par {{carnet.utilisateur.username}}</p>
+        {#<p> par {{carnet.utilisateur.username}}</p>#}
         {{carnet.dateCarnet|date('d/m/Y')}}
     </div>
     <hr>
-    <h3>Mes posts</h3>
+    <h2>Mes posts</h2>
     <div class="example-wrapper">
         {% for post in carnet.posts %}
-            <li>{{post.datePost|date('d/m/Y')}}</li>
-            <h4>{{post.titre}}</h4>
+            <h3>{{post.titre}}</h3>
+            <p>{{post.datePost|date('d/m/Y')}}</p>
             {% for photo in post.photos %}
                 {% if photo.imageFile starts with 'http' %}
                     <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
@@ -36,9 +37,9 @@
                 <h5>Commentaires</h5>
                 {% for comment in post.comments %}
                     <div>
+                        <p>{{comment.dateComment|date('d/m/Y')}}</p>
                         <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
                         {{comment.utilisateur.username}}</p>
-                        <p>{{comment.dateComment|date('d/m/Y')}}</p>
                         <p>{{comment.texte}}</p>
                     </div>
                 {% endfor %}
