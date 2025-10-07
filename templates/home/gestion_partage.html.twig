@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion partage{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<h1>Partage</h1>
+<hr>
+<div class="example-wrapper">
+<h3>Mes partages</h3>
+
+{{ form_start(accesForm) }}
+    {{ form_row(accesForm.carnet) }}
+    {{ form_row(accesForm.user) }}
+    <button type="submit">Partager</button>
+{{ form_end(accesForm) }}
+<div>
+<hr>
+
+<div class="example-wrapper">
+{% for carnet in carnetsCrees %}
+    <li><h4>{{ carnet.titre }}</p></li>
+    {% if carnet.photo starts with 'http' %}
+    <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+    {% else %}
+    <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+    {% endif %}
+    <div class="example-wrapper">
+    {% for user in carnet.usersAcces %}
+        <li>{{ user.username }}</li>
+    {% endfor %}
+    </div>
+    <hr>
+{% endfor %}
+</div>
+
+{% endblock %}

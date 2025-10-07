@@ -111,36 +111,57 @@ final class HomeController extends AbstractController
         }
         else
         {
-            $vars = ['postForm' => $postForm];
+            $vars = ['postForm' => $postForm->createView()];
             return $this->render('forms/nouveau_post.html.twig', $vars);
         }
 
     }
 
-    #[Route('/home/Partage', name: 'page_partage')]
+    #[Route('/home/partage', name: 'page_partage')]
     public function gestionPartage(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
-    // formulaire de selection carnet et user
+    // formulaire de selection carnet et user pour partage
         $carnets = $user->getCarnetsCrees();
-        $form = $this->createForm(AccesType::class,null, [
+        $accesForm = $this->createForm(AccesType::class,null, [
             'carnets' => $carnets,
+            'user' => $user,
         ]);
                 
-        $form->handleRequest($request);
+        $accesForm->handleRequest($request);
 
-
+        if ($accesForm->isSubmitted() && $accesForm->isValid()) {
+            $carnet = $accesForm->get('carnet')->getData();
+            $utilisateur = $accesForm->get('user')->getData();
+    
+            if ($carnet->getUsersAcces()->contains($utilisateur)) 
+            {
+                $this->addFlash('warning', 'Cet utilisateur a déjà accès à ce carnet.');
+            } 
+            else 
+            {
+                $carnet->addUserAcces($utilisateur);
+                $utilisateur->addCarnetAcces($carnet);
+    
+                $em->persist($carnet);
+                $em->persist($utilisateur);
+                $em->flush();
+            }
+    
+            return $this->redirectToRoute('page_partage');
+        }
 
         $carnetsCrees = $user->getCarnetsCrees()->toArray();
-        $invitation = $user->getInvitation()->toArray();
+        // $invitation = $user->getInvitation()->toArray();
         $vars = [
-            'invitation'=>$invitation,
+            'accesForm' => $accesForm->createView(),
+            // 'invitation'=>$invitation,
             'carnetsCrees' => $carnetsCrees,
             'user' => $user,
         ];
 
-        return $this->render('home/partage/partage.html.twig', $vars);
+        return $this->render('home/gestion_partage.html.twig', $vars);
 
     }
 }
