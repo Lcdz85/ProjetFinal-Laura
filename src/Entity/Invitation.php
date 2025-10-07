@@ -27,7 +27,7 @@ class Invitation
     #[ORM\JoinColumn(nullable: false)]
     private ?Carnet $carnet = null;
 
-    #[ORM\ManyToOne(inversedBy: 'invitations')]
+    #[ORM\ManyToOne(inversedBy: 'invitations', cascade: ['persist'])]
     private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int

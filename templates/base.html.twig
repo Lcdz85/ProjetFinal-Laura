@@ -12,6 +12,25 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <header>
+            <h1>Carnet de Voyage</h1>
+            {% if app.user %}
+            <div class="mb-3">
+                
+                You are logged in as 
+                <strong>{{ app.user.userIdentifier }}</strong>
+                <img src="{{ asset('uploads/avatars/' ~ app.user.photo) }}" alt="Avatar" width="25"> 
+                <a href="{{ path('app_logout') }}">Déconnexion</a><br>
+            </div>
+            
+            <input type="button" value="Home" onclick="window.location.href='{{ path('page_home') }}'"> 
+            <hr>
+            {% endif %}
+        </header>
+
+        {% block body %}
+        
+
+        {% endblock %}
     </body>
 </html>

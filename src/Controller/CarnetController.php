@@ -21,3 +21,4 @@ final class CarnetController extends AbstractController
        return $this->render('carnet/afficher_carnet.html.twig', $vars);
     }
 }
+

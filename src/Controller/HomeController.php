@@ -6,6 +6,10 @@ use App\Entity\Carnet;
 use App\Form\CarnetType;
 use App\Entity\Post;    
 use App\Form\PostType;  
+<<<<<<< HEAD
+=======
+// use App\Form\PhotoType;     // add
+>>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,10 +58,13 @@ final class HomeController extends AbstractController
         $carnetForm = $this->createForm(CarnetType::class, $carnet);
 
         $carnetForm->handleRequest($req);
+<<<<<<< HEAD
 
         
 
 
+=======
+>>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f
         
         if ($carnetForm->isSubmitted() && $carnetForm->isValid())
         {
@@ -70,7 +77,11 @@ final class HomeController extends AbstractController
             // fixer le lien
             $carnet->setPhoto($nom);
 
+<<<<<<< HEAD
             $dossier = $this->getParameter('kernel.project_dir').'/public/uploads';
+=======
+            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
+>>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f
             $objFichier->move($dossier, $nom);
 
             $em->persist($carnet);
@@ -94,11 +105,13 @@ final class HomeController extends AbstractController
         $post->setDatePost(new \DateTime());
         $post->setCarnet($carnet);
         $postForm = $this->createForm(PostType::class, $post);
-
+        
         $postForm->handleRequest($req);
 
-        if ($postForm->isSubmitted())
+        if ($postForm->isSubmitted() && $postForm->isValid())
         {
+
+            // dd($post);
             $em->persist($post);
             $em->flush();
             return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);

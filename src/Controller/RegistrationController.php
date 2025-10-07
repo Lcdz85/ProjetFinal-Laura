@@ -22,11 +22,22 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            //récup données password
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
-
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+            //récup données photo
+            $photo = $form->get('photo')->getData();
+            // lui donner un nom unique pour la DB
+            $nom = md5(uniqid()) . "." . $photo->guessExtension();
+            //choisir le dossier où elle sera placée
+            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/avatars';
+            $photo->move($dossier, $nom);
+            //fixer le lien
+            $user->setPhoto($nom);
 
             $entityManager->persist($user);
             $entityManager->flush();

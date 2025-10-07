@@ -15,11 +15,16 @@ class InvitationFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create('fr_BE');
 
-        for ($i = 1; $i <= 5; $i++) {
+        $count = 0;
+        while ($count < 5) {
 
             $token = $faker->regexify('[A-Za-z0-9]{50}');
-
             $user = $this->getReference("user_" . rand(1, count($manager->getRepository(Utilisateur::class)->findAll())), Utilisateur::class);
+            $usersCarnets = $user->getCarnetsCrees()->toArray();
+            
+            if (count($usersCarnets) === 0) {continue;}
+            
+            $carnet = $usersCarnets[rand(0,count($usersCarnets)-1)];
 
             $invitation = new Invitation();
             $invitation->setEmail($faker->email())
@@ -27,20 +32,11 @@ class InvitationFixtures extends Fixture implements DependentFixtureInterface
                         ->setDateInvite($faker->dateTimeBetween('-2 year', 'now'))
                         ->setUtilisateur($user);
             $user->addInvitation($invitation);
-            
-            $usersCarnets = $user->getCarnetsCrees()->toArray();
-            if (count($usersCarnets) > 0) {
-                $carnet = $usersCarnets[rand(0,count($usersCarnets)-1)];
-                $invitation->setCarnet($carnet);
-                $carnet->addInvitation($invitation);
-                
-                $manager->persist($carnet);
-            }
-
-            $this->addReference('invite_' . $i, $invitation);
+            $carnet->addInvitation($invitation);
 
             $manager->persist($invitation);
             
+            $count++;
         }
 
         $manager->flush();

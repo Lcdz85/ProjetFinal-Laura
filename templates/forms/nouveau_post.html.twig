@@ -8,9 +8,36 @@
 
     {{ form_start (postForm) }}
 
+<<<<<<< HEAD
     {{ form_widget (postForm)}}       {# Les champs du formulaire #}
     <input type="submit" value="Créer"> {# Le bouton submit du formulaire #}
 
     {{ form_end (postForm)}}
 
 {% endblock %}
+=======
+        {{ form_row (postForm.titre)}}       {# Les champs du formulaire #}
+        {{ form_row (postForm.texte)}}       {# Les champs du formulaire #}
+
+
+        <div id="photos-wrapper" data-prototype="{{ form_widget(postForm.photos.vars.prototype)|e('html_attr') }}">
+            {{ form_widget(postForm.photos) }}
+        </div>
+
+        <button type="button" id="add-photo">Ajouter une photo</button>
+        <button type="submit">Enregistrer</button>
+
+
+    {{ form_end (postForm)}}
+
+<script>
+document.getElementById('add-photo').addEventListener('click', function() {
+    const list = document.getElementById('photos-wrapper');
+    const index = list.children.length;
+    const prototype = list.dataset.prototype.replace(/__name__/g, index);
+    list.insertAdjacentHTML('beforeend', prototype);
+});
+</script>
+
+{% endblock %}
+>>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f

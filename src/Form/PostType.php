@@ -2,16 +2,17 @@
 
 namespace App\Form;
 
-use App\Entity\Carnet;
 use App\Entity\Post;
+use App\Entity\Carnet;
 use App\Entity\Utilisateur;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class PostType extends AbstractType
 {
@@ -20,11 +21,14 @@ class PostType extends AbstractType
         $builder
             ->add('titre', TextType::class)
             ->add('texte', TextareaType::class)
-            // ->add('photo', FileType::class, [
-            //     'label' => "Sélectionner une photo de couverture",
-            //     'mapped' => false, 
-            //     'required' => false 
-            //     ])
+            ->add('photos', CollectionType::class, [
+                'entry_type' => PhotoType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
+            ]);
+
             // ->add('latitude')
             // ->add('longitude')
         ;
