@@ -31,8 +31,10 @@ class RegistrationController extends AbstractController
 
             //récup données photo
             $photo = $form->get('photo')->getData();
+
             // lui donner un nom unique pour la DB
-            $nom = md5(uniqid()) . "." . $photo->guessExtension();
+            $username = $form->get('username')->getData();
+            $nom = $username. "." . $photo->guessExtension();
             //choisir le dossier où elle sera placée
             $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/avatars';
             $photo->move($dossier, $nom);

@@ -8,16 +8,8 @@
 
     {{ form_start (postForm) }}
 
-<<<<<<< HEAD
-    {{ form_widget (postForm)}}       {# Les champs du formulaire #}
-    <input type="submit" value="Créer"> {# Le bouton submit du formulaire #}
-
-    {{ form_end (postForm)}}
-
-{% endblock %}
-=======
-        {{ form_row (postForm.titre)}}       {# Les champs du formulaire #}
-        {{ form_row (postForm.texte)}}       {# Les champs du formulaire #}
+        {{ form_row (postForm.titre)}} 
+        {{ form_row (postForm.texte)}}
 
 
         <div id="photos-wrapper" data-prototype="{{ form_widget(postForm.photos.vars.prototype)|e('html_attr') }}">
@@ -40,4 +32,3 @@ document.getElementById('add-photo').addEventListener('click', function() {
 </script>
 
 {% endblock %}
->>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f

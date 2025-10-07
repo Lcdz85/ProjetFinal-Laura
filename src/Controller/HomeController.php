@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Carnet;
+use App\Entity\Post;
+use App\Entity\Invitation;
+
 use App\Form\CarnetType;
-use App\Entity\Post;    
 use App\Form\PostType;  
-// use App\Form\PhotoType;     // add
+use App\Form\AccesType;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -58,11 +60,16 @@ final class HomeController extends AbstractController
         
         if ($carnetForm->isSubmitted() && $carnetForm->isValid())
         {
+            $em->persist($carnet);
+            $em->flush();
+
             // $objFichier contient toutes les donnees du fichier
             $objFichier = $carnetForm['photo']->getData();
 
             // $nom est juste un string
-            $nom = md5(uniqid()) . "." . $objFichier->guessExtension();
+            $user = $this->getUser()->getUsername();
+            $carnetNumber = $this->getUser()->getCarnetsCrees()->count();
+            $nom = $user."_carnet-". $carnetNumber."_". bin2hex(random_bytes(8)) . "." . $objFichier->guessExtension();
             
             // fixer le lien
             $carnet->setPhoto($nom);
@@ -70,8 +77,9 @@ final class HomeController extends AbstractController
             $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
             $objFichier->move($dossier, $nom);
 
-            $em->persist($carnet);
             $em->flush();
+
+
             return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
             
         } 
@@ -96,7 +104,6 @@ final class HomeController extends AbstractController
 
         if ($postForm->isSubmitted() && $postForm->isValid())
         {
-
             // dd($post);
             $em->persist($post);
             $em->flush();
@@ -107,6 +114,33 @@ final class HomeController extends AbstractController
             $vars = ['postForm' => $postForm];
             return $this->render('forms/nouveau_post.html.twig', $vars);
         }
+
+    }
+
+    #[Route('/home/Partage', name: 'page_partage')]
+    public function gestionPartage(Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+    // formulaire de selection carnet et user
+        $carnets = $user->getCarnetsCrees();
+        $form = $this->createForm(AccesType::class,null, [
+            'carnets' => $carnets,
+        ]);
+                
+        $form->handleRequest($request);
+
+
+
+        $carnetsCrees = $user->getCarnetsCrees()->toArray();
+        $invitation = $user->getInvitation()->toArray();
+        $vars = [
+            'invitation'=>$invitation,
+            'carnetsCrees' => $carnetsCrees,
+            'user' => $user,
+        ];
+
+        return $this->render('home/partage/partage.html.twig', $vars);
 
     }
 }

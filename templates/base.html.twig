@@ -11,6 +11,12 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
+    <style>
+        header{background-color: rgba(41, 23, 0, 0.86);}
+        header {
+            color: white;
+        }
+    </style>
     <body>
         <header>
             <h1>Carnet de Voyage</h1>
@@ -19,7 +25,11 @@
                 
                 You are logged in as 
                 <strong>{{ app.user.userIdentifier }}</strong>
-                <img src="{{ asset('uploads/avatars/' ~ app.user.photo) }}" alt="Avatar" width="25"> 
+                {% if app.user.photo starts with 'http' %}
+                <img src="{{ app.user.photo }}" alt="Photo du carnet" width="25">
+                {% else %}
+                <img src="{{ asset('uploads/avatars/' ~ app.user.photo) }}" alt="Photo du carnet" width="25">
+                {% endif %} 
                 <a href="{{ path('app_logout') }}">Déconnexion</a><br>
             </div>
             

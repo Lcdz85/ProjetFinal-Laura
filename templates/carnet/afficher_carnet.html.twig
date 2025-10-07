@@ -3,33 +3,6 @@
 {% block title %}{{carnet.titre}}{% endblock %}
 
 {% block body %}
-<<<<<<< HEAD
-
-    <div class="example-wrapper">
-        <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
-    </div>
-    
-    <div class="example-wrapper">
-        <h1>{{carnet.titre}}</h1>
-        <img src="/uploads/{{ carnet.photo }}" alt="Photo du carnet" width="100">
-        <p> par {{carnet.utilisateur.username}}</p>
-        {{carnet.dateCarnet|date('d/m/Y')}}
-    </div>
-    <hr>
-    <h3>Mes posts</h3>
-    <div class="example-wrapper">
-        {% for post in carnet.posts %}
-            <li>{{post.datePost|date('d/m/Y')}}</li>
-            <h4>{{post.titre}}</h4>
-            <img src="{{ post.photo }}" alt="Photo du post" width="150">
-            {% if post.comments is not empty %}
-                <h6>Commentaires</h6>
-                {% for comment in post.comments %}
-                    <div>
-                        <p><img src="{{comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
-                        {{comment.utilisateur.username}}</p>
-                        <p>{{comment.dateComment|date('d/m/Y')}}</p>
-=======
     {% if app.user == carnet.utilisateur %}
     <div class="example-wrapper">
         <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
@@ -67,7 +40,6 @@
                         <p>{{comment.dateComment|date('d/m/Y')}}</p>
                         <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
                         {{comment.utilisateur.username}}</p>
->>>>>>> 5c3ef739af84a07ca56593ad28e64338460f4d8f
                         <p>{{comment.texte}}</p>
                     </div>
                 {% endfor %}
