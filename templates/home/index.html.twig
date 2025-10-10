@@ -13,8 +13,8 @@
 </div>
 <hr>
 
+<h2>Mes Carnets créés</h2>
 <div class="example-wrapper">
-    <h2>Mes Carnets créés</h2>
     {% for carnet in carnetsCrees %}
         <li><h4>{{carnet.titre}}</h4></li>
         {% if carnet.photo starts with 'http' %}
@@ -29,8 +29,8 @@
 </div>
 
 
+<h2>Commentaires sur mes carnets</h2>
 <div class="example-wrapper">
-    <h2>Comments sur mes carnets</h2>
     {% for comment in comments %}
         <div>
             <li><h4>{{comment.post.carnet.titre}}</h4></li>
@@ -47,8 +47,8 @@
     {% endfor %}
 </div>
 
+<h2>Mes Carnets accessibles</h2>
 <div class="example-wrapper">
-    <h2>Mes Carnets accessibles</h2>
     {% for carnet in carnetsAcces %}
         <li><h4>{{carnet.titre}}</h4></li>
         {{carnet.dateCarnet|date('d/m/Y')}}
@@ -61,6 +61,4 @@
 
     {% endfor %}
 </div>
-
-
 {% endblock %}

@@ -147,6 +147,8 @@ final class HomeController extends AbstractController
                 $em->persist($carnet);
                 $em->persist($utilisateur);
                 $em->flush();
+
+                $this->addFlash('success', 'Partage réussi !');
             }
     
             return $this->redirectToRoute('page_partage');

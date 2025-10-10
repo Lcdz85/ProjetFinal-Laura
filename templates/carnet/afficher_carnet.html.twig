@@ -3,23 +3,31 @@
 {% block title %}{{carnet.titre}}{% endblock %}
 
 {% block body %}
-    {% if app.user == carnet.utilisateur %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <h1>{{carnet.titre}}</h1>
     <div class="example-wrapper">
-        <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
-    </div>
-    {% endif %}
-    
-    <div class="example-wrapper">
-        <h1>{{carnet.titre}}</h1>
         {% if carnet.photo starts with 'http' %}
             <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
         {% else %}
             <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
         {% endif %}
-        {#<p> par {{carnet.utilisateur.username}}</p>#}
+        {% if app.user != carnet.utilisateur %}
+            <p> par <strong>{{carnet.utilisateur.username}}</strong></p>
         {{carnet.dateCarnet|date('d/m/Y')}}
+        {% endif %}
     </div>
+
+    {% if app.user == carnet.utilisateur %}
+        <div class="example-wrapper">
+            <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
+        </div>
+    {% endif %}
     <hr>
+
     <h2>Posts</h2>
     <div class="example-wrapper">
         {% for post in carnet.posts %}
