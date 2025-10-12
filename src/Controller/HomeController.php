@@ -131,13 +131,17 @@ final class HomeController extends AbstractController
                 
         $accesForm->handleRequest($request);
 
-        if ($accesForm->isSubmitted() && $accesForm->isValid()) {
+        if ($request->isXmlHttpRequest() && $accesForm->isSubmitted() && $accesForm->isValid()) {
+
             $carnet = $accesForm->get('carnet')->getData();
             $utilisateur = $accesForm->get('user')->getData();
     
             if ($carnet->getUsersAcces()->contains($utilisateur)) 
             {
-                $this->addFlash('warning', 'Cet utilisateur a déjà accès à ce carnet.');
+                return $this->json([
+                    'status' => 'warning',
+                    'message' => 'Cet utilisateur a déjà accès à ce carnet.',
+                ]);
             } 
             else 
             {
@@ -148,10 +152,16 @@ final class HomeController extends AbstractController
                 $em->persist($utilisateur);
                 $em->flush();
 
-                $this->addFlash('success', 'Partage réussi !');
+                return $this->json([
+                    'status' => 'success',
+                    'message' => "Partage de {$carnet->getTitre()} avec {$utilisateur->getUsername()} réussi !",
+                    'newUser' => [
+                        'id' => $utilisateur->getId(),
+                        'username' => $utilisateur->getUsername(),
+                        'carnetId' => $carnet->getId(),
+                    ],
+                ]);
             }
-    
-            return $this->redirectToRoute('page_partage');
         }
 
         $carnetsCrees = $user->getCarnetsCrees()->toArray();
@@ -164,6 +174,5 @@ final class HomeController extends AbstractController
         ];
 
         return $this->render('home/gestion_partage.html.twig', $vars);
-
     }
 }
