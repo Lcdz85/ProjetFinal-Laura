@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class PostType extends AbstractType
 {
@@ -27,11 +28,9 @@ class PostType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => false,
-            ]);
-
-            // ->add('latitude')
-            // ->add('longitude')
-        ;
+            ])
+            ->add('latitude', HiddenType::class)
+            ->add('longitude', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

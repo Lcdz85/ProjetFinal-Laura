@@ -1,0 +1,31 @@
+/* Map container styles */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Marker popup styles */
+.marker-popup h5 {
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.marker-popup img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+/* Category badge styles */
+.category-badge {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}

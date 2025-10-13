@@ -2,14 +2,24 @@
 
 {% block title %}Nouveau post{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+{% endblock %}
+
 {% block body %}
 
 <h3>Nouveau post</h3>
 
     {{ form_start (postForm) }}
 
+        <div id="map" style="height: 400px; margin-bottom: 1em;"></div>
+
         {{ form_row (postForm.titre)}} 
         {{ form_row (postForm.texte)}}
+
+        {{ form_widget(postForm.latitude) }}
+        {{ form_widget(postForm.longitude) }}
 
 
         <div id="photos-wrapper" data-prototype="{{ form_widget(postForm.photos.vars.prototype)|e('html_attr') }}">
@@ -19,8 +29,13 @@
         <button type="button" id="add-photo">Ajouter une photo</button>
         <button type="submit">Enregistrer</button>
 
-
     {{ form_end (postForm)}}
+    
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
 document.getElementById('add-photo').addEventListener('click', function() {
@@ -29,6 +44,60 @@ document.getElementById('add-photo').addEventListener('click', function() {
     const prototype = list.dataset.prototype.replace(/__name__/g, index);
     list.insertAdjacentHTML('beforeend', prototype);
 });
+
+// ajout localisation depuis la carte
+
+// --- Initialisation ---
+        var map = L.map('map');
+        var marker;
+
+        // Fond de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // --- Fonction d'ajout de marqueur ---
+        function placeMarker(lat, lng, message = null) {
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+            if (message) marker.bindPopup(message).openPopup();
+            document.getElementById('post_latitude').value = lat.toFixed(7);
+            document.getElementById('post_longitude').value = lng.toFixed(7);
+        }
+
+        // --- Fallback : vue par défaut sur la France ---
+        function fallbackView() {
+            map.setView([46.8, 2.5], 6);
+            console.warn("Géolocalisation refusée ou indisponible. Carte centrée sur la France.");
+        }
+
+        // --- Tentative de géolocalisation automatique ---
+        map.locate({ setView: true, maxZoom: 13 });
+
+        map.on('locationfound', function(e) {
+            var lat = e.latitude;
+            var lng = e.longitude;
+            placeMarker(lat, lng, "Vous êtes ici !");
+        });
+
+        map.on('locationerror', fallbackView);
+
+        // --- Clic manuel sur la carte ---
+        map.on('click', function(e) {
+            placeMarker(e.latlng.lat, e.latlng.lng);
+        });
+
+        // --- Recherche d’adresse ---
+        var geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false
+        })
+        .on('markgeocode', function(e) {
+            var lat = e.geocode.center.lat;
+            var lng = e.geocode.center.lng;
+            placeMarker(lat, lng);
+            map.setView([lat, lng], 13);
+        })
+        .addTo(map);
 </script>
 
 {% endblock %}
