@@ -8,22 +8,33 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\ORM\EntityRepository;
 
 class AccesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'];
+
         $builder
         ->add('carnet', EntityType::class, [
             'class' => Carnet::class,
             'choices' => $options['carnets'], 
             'choice_label' => 'titre',
-            'label' => 'Carnet à partager',
+            'placeholder' => 'Carnet à partager',
+            'label' => false,
         ])
         ->add('user', EntityType::class, [
             'class' => Utilisateur::class,
             'choice_label' => 'username',
-            'label' => 'Utilisateur à ajouter',
+            'placeholder' => 'Utilisateur à ajouter',
+            'label' => false,
+            'query_builder' => function (EntityRepository $er) use ($user) {
+                return $er->createQueryBuilder('u')
+                    ->where('u != :user')
+                    ->setParameter('user', $user)
+                    ->orderBy('u.username', 'ASC');
+            },
         ]);
     }
 
@@ -31,6 +42,7 @@ class AccesType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'user' => null,
             'carnets' => [],
         ]);
     }

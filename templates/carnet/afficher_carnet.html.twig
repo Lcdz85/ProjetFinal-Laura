@@ -9,38 +9,6 @@
 {% endblock %}
 
 {% block body %}
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4">Localisation des posts</h1>
-                <div class="card">
-                    <div class="card-body">
-                        <div id="map" data-api-endpoint="{{ path('api_localisations') }}"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para mostrar información detallada -->
-    <div class="modal fade" id="attractionModal" tabindex="-1" aria-labelledby="attractionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="attractionModalLabel">Información de la Atracción</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="attractionModalBody">
-                    <!-- Contenido dinámico -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {% if app.user == carnet.utilisateur %}
     <div class="example-wrapper">
         <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
@@ -48,17 +16,25 @@
     {% endif %}
     
     <div class="example-wrapper">
-        <h1>{{carnet.titre}}</h1>
         {% if carnet.photo starts with 'http' %}
             <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
         {% else %}
             <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
         {% endif %}
-        {#<p> par {{carnet.utilisateur.username}}</p>#}
+        {% if app.user != carnet.utilisateur %}
+            <p> par <strong>{{carnet.utilisateur.username}}</strong></p>
         {{carnet.dateCarnet|date('d/m/Y')}}
+        {% endif %}
     </div>
+
+    {% if app.user == carnet.utilisateur %}
+        <div class="example-wrapper">
+            <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
+        </div>
+    {% endif %}
     <hr>
-    <h2>Mes posts</h2>
+
+    <h2>Posts</h2>
     <div class="example-wrapper">
         {% for post in carnet.posts %}
             <h3>{{post.titre}}</h3>

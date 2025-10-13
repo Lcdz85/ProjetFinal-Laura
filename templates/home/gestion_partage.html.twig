@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion partage{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<h1>Partage</h1>
+<hr>
+<div class="example-wrapper">
+<h3>Mes partages</h3>
+{{ form_start(accesForm, {
+    'attr': {
+        'id': 'form-partage'
+    }}
+    ) 
+}}
+    {{ form_row(accesForm.carnet) }}
+    {{ form_row(accesForm.user) }}
+    <button type="submit">Partager</button>
+{{ form_end(accesForm) }}
+<div id="messages" class="mt-3"></div>
+</div>
+<hr>
+
+{% for carnet in carnetsCrees %}
+    <div id="carnet{{ carnet.id }}" class="example-wrapper">
+        <h4>{{ carnet.titre }}</h4>
+        {% if carnet.photo starts with 'http' %}
+        <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% else %}
+        <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+        {% endif %}
+        <div class="liste-utilisateurs">
+        {% for user in carnet.usersAcces %}
+            <li>{{ user.username }}</li>
+        {% endfor %}
+    </div>
+    <hr>
+{% endfor %}
+</div>
+
+<script>
+    document.querySelector('#form-partage').addEventListener('submit', async (e) => {
+        e.preventDefault();
+    
+        const form = e.target;
+        const formData = new FormData(form);
+    
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        });
+    
+        const data = await response.json();
+        const messagesDiv = document.querySelector('#messages');
+        messagesDiv.innerHTML = `<div class="alert alert-${data.status}">${data.message}</div>`;
+    
+        //  Si partage réussi, on ajoute le user à la bonne liste
+        if (data.status === 'success' && data.newUser) {
+            const carnetDiv = document.querySelector(`#carnet${data.newUser.carnetId} .liste-utilisateurs`);
+    
+            if (carnetDiv) {
+                const div = document.createElement('div');
+                div.textContent = data.newUser.username;
+                carnetDiv.appendChild(div);
+            }
+        }
+    
+        // Effacer le message après quelques secondes
+        setTimeout(() => messagesDiv.innerHTML = '', 4000);
+    });
+    </script>
+    
+
+{% endblock %}
