@@ -10,7 +10,7 @@
 
 <h1>Partage</h1>
 <hr>
-<div class="example-wrapper">
+<div>
 <h3>Mes partages</h3>
 {{ form_start(accesForm, {
     'attr': {
@@ -27,7 +27,7 @@
 <hr>
 
 {% for carnet in carnetsCrees %}
-    <div id="carnet{{ carnet.id }}" class="example-wrapper">
+    <div id="carnet{{ carnet.id }}">
         <h4>{{ carnet.titre }}</h4>
         {% if carnet.photo starts with 'http' %}
         <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">

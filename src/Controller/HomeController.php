@@ -9,6 +9,7 @@ use App\Entity\Invitation;
 use App\Form\CarnetType;
 use App\Form\PostType;  
 use App\Form\AccesType;
+use App\Repository\PostRepository;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class HomeController extends AbstractController
 {
@@ -174,5 +176,29 @@ final class HomeController extends AbstractController
         ];
 
         return $this->render('home/gestion_partage.html.twig', $vars);
+    }
+
+    #[Route('/api/localisations', name: 'api_localisations', methods: ['GET'])]
+    public function getLocalisations(PostRepository $repository): JsonResponse
+    {
+        $localisations = $repository->findAll();
+
+        $data = [];
+        foreach ($localisations as $localisation) {
+            // Get first photo for each localisation if available
+            $photos = $localisation->getPhotos();
+            $image = $photos->count() > 0 ? $photos->first()->getImageFile() : null;
+
+            $data[] = [
+                'id' => $localisation->getId(),
+                'titre' => $localisation->getTitre(),
+                'date' => $localisation->getDatePost()->format('d/m/Y'),
+                'latitude' => (float) $localisation->getLatitude(),
+                'longitude' => (float) $localisation->getLongitude(),
+                'image' => $image,
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 }

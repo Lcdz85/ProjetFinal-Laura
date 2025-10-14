@@ -9,13 +9,45 @@
 {% endblock %}
 
 {% block body %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Localisation des posts</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <div id="map" data-api-endpoint="{{ path('api_localisations') }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar información detallada -->
+    {# <div class="modal fade" id="attractionModal" tabindex="-1" aria-labelledby="attractionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="attractionModalLabel">Information sur l'attraction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="attractionModalBody">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div> #}
+
     {% if app.user == carnet.utilisateur %}
-    <div class="example-wrapper">
+    <div>
         <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
     </div>
     {% endif %}
     
-    <div class="example-wrapper">
+    <div>
         {% if carnet.photo starts with 'http' %}
             <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
         {% else %}
@@ -28,14 +60,14 @@
     </div>
 
     {% if app.user == carnet.utilisateur %}
-        <div class="example-wrapper">
+        <div>
             <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
         </div>
     {% endif %}
     <hr>
 
     <h2>Posts</h2>
-    <div class="example-wrapper">
+    <div>
         {% for post in carnet.posts %}
             <h3>{{post.titre}}</h3>
             <p>{{post.datePost|date('d/m/Y')}}</p>
@@ -62,6 +94,10 @@
         {% endfor %}
     </div>
 
+{% endblock %}
 
-
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="{{ asset('js/map.js') }}"></script>
 {% endblock %}
