@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Carnet;
+use App\Repository\CarnetRepository;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,16 +24,28 @@ final class CarnetController extends AbstractController
        return $this->render('carnet/afficher_carnet.html.twig', $vars);
     }
 
-    #[Route('/api/localisations', name: 'api_localisations', methods: ['GET'])]
-    public function getLocalisations(PostRepository $repository): JsonResponse
+    #[Route('/api/localisations/{id}', name: 'api_localisations', methods: ['GET'])]
+    public function getLocalisations(PostRepository $repository, $id): JsonResponse
     {
-        $localisations = $repository->findAll();
-
+        $localisations = $repository->findBy(['carnet' => $id]);
         $data = [];
         foreach ($localisations as $localisation) {
-            // Get first photo for each post if available
             $photos = $localisation->getPhotos();
-            $photo = $photos->count() > 0 ? $photos->first()->getUrl() : null;
+            $photo = null;
+
+            if ($photos->count() > 0) {
+                $firstPhoto = $photos->first();
+                $imageFile = $firstPhoto->getImageFile();
+
+                if ($imageFile) {
+                    if (str_starts_with($imageFile, 'http') || str_starts_with($imageFile, '/uploads/')) {
+                        $photo = $imageFile;
+                    } 
+                    else {
+                        $photo = '/uploads/posts/' . $imageFile;
+                    }
+                }
+            }
 
             $data[] = [
                 'id' => $localisation->getId(),
@@ -46,5 +59,6 @@ final class CarnetController extends AbstractController
 
         return new JsonResponse($data);
     }
+
 }
 

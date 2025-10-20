@@ -10,6 +10,8 @@ use App\Form\CarnetType;
 use App\Form\PostType;  
 use App\Form\AccesType;
 use App\Repository\PostRepository;
+use App\Repository\CarnetRepository;
+
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,7 +49,7 @@ final class HomeController extends AbstractController
             'user' => $user,
         ];
             
-        return $this->render('home/index.html.twig', $vars);
+        return $this->render('home/home.html.twig', $vars);
     }
 
     #[Route('/home/nouveau_carnet', name: 'page_nouveau_carnet')]
@@ -178,24 +180,58 @@ final class HomeController extends AbstractController
         return $this->render('home/gestion_partage.html.twig', $vars);
     }
 
-    #[Route('/api/localisations', name: 'api_localisations', methods: ['GET'])]
-    public function getLocalisations(PostRepository $repository): JsonResponse
+    #[Route('/api/localisations/all', name: 'api_localisations_all', methods: ['GET'])]
+    public function getLocalisations(CarnetRepository $repository): JsonResponse
     {
-        $localisations = $repository->findAll();
+        $user = $this->getUser();
+        // Inclure les carnets créés 
+        $carnets = $user->getCarnetsCrees()->toArray();
 
+        $localisations = [];
+        foreach ($carnets as $carnet) {
+            foreach ($carnet->getPosts() as $post) {
+                $localisations[] = $post;
+            }
+        }
         $data = [];
         foreach ($localisations as $localisation) {
             // Get first photo for each localisation if available
             $photos = $localisation->getPhotos();
-            $image = $photos->count() > 0 ? $photos->first()->getImageFile() : null;
+            $photo = null;
+
+            if ($photos->count() > 0) {
+                $firstPhoto = $photos->first();
+                $imageFile = $firstPhoto->getImageFile();
+
+                if ($imageFile) {
+                    if (str_starts_with($imageFile, 'http') || str_starts_with($imageFile, '/uploads/')) {
+                        $photo = $imageFile;
+                    } 
+                    else {
+                        $photo = '/uploads/posts/' . $imageFile;
+                    }
+                }
+            }
+
+            $latStr = $localisation->getLatitude();
+            $lngStr = $localisation->getLongitude();
+            // Normalize decimal separators: accept both comma and dot
+            $latNorm = str_replace(',', '.', trim((string)$latStr));
+            $lngNorm = str_replace(',', '.', trim((string)$lngStr));
+            if ($latNorm === '' || $lngNorm === '' || !is_numeric($latNorm) || !is_numeric($lngNorm)) {
+                continue;
+            }
+
+            $lat = (float) $latNorm;
+            $lng = (float) $lngNorm;
 
             $data[] = [
                 'id' => $localisation->getId(),
                 'titre' => $localisation->getTitre(),
                 'date' => $localisation->getDatePost()->format('d/m/Y'),
-                'latitude' => (float) $localisation->getLatitude(),
-                'longitude' => (float) $localisation->getLongitude(),
-                'image' => $image,
+                'latitude' => $lat,
+                'longitude' => $lng,
+                'photo' => $photo,
             ];
         }
 

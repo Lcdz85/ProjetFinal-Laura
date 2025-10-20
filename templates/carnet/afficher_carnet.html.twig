@@ -16,7 +16,7 @@
                 <h1 class="mb-4">Localisation des posts</h1>
                 <div class="card">
                     <div class="card-body">
-                        <div id="map" data-api-endpoint="{{ path('api_localisations') }}"></div>
+                        <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
                     </div>
                 </div>
             </div>
@@ -92,12 +92,10 @@
             {% endif %}
         <hr>
         {% endfor %}
+
     </div>
 
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="{{ asset('js/map.js') }}"></script>
+
 {% endblock %}

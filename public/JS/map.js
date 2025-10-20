@@ -26,29 +26,32 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch(apiEndpoint)
         .then(response => response.json())
         .then(localisations => {
+            console.debug('Localisations reçues:', localisations);
             if (localisations.length === 0) {
                 console.warn('Aucune localisation dans la BD');
                 return;
             }
 
             localisations.forEach(localisation => {
-                // Only create marker if it has valid coordinates
-                if (localisation.latitude && localisation.longitude) {
-                    // Create marker
-                    const marker = L.marker([localisation.latitude, localisation.longitude])
-                        .addTo(map);
+                // Parse and validate coordinates
+                const lat = parseFloat(localisation.latitude);
+                const lng = parseFloat(localisation.longitude);
+                if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                    const marker = L.marker([lat, lng]).addTo(map);
 
                     // Simple popup with name
                     marker.bindPopup(`
                         <div class="marker-popup">
                             <h5>${localisation.titre}</h5>
                             ${localisation.category ? `<span class="category-badge">${localisation.category}</span><br>` : ''}
-                            <img src="${localisation.photo}" class="localisation-image">
+                            ${localisation.photo ? `<img src="${localisation.photo}" class="localisation-image">` : ''}
                             <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href = '/localisation/${localisation.id}';">
                                 Détail
                             </button>
                         </div>
                     `);
+                } else {
+                    console.warn('Coordonnées invalides pour la localisation', localisation);
                 }
             });
 
