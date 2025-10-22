@@ -1,8 +1,54 @@
 body {
-    background-color: rgb(221, 221, 221);
-    
+    background-color: rgb(255, 255, 255);
 }
-h1, h2 {
+main{
+    width: 70%;  
+    max-width: 1140px;
+    margin: auto;
+}
+h1, h2{
     text-decoration: underline;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+section{
+    margin-bottom: 2rem;
+}
+
+.carnets-container{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
     
 }
+.carnet{
+    display: flex;
+    flex-direction: column;
+}
+.card{
+    border-radius: 2px;
+
+}
+.card>img{
+    border-radius: 2px;
+}
+.card-body{
+   background-color: rgb(233, 235, 236);
+   font-size: 0.7rem;
+   text-align: center;
+}
+
+.card-title{
+    font-size: 0.8rem;
+}
+
+.btn-light{
+    font-size: 0.8rem;
+    border-radius: 0;
+    padding: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+

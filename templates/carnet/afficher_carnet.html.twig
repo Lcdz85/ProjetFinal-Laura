@@ -6,73 +6,88 @@
     {{ parent() }}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="{{ asset('styles/map.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
 {% endblock %}
 
 {% block body %}
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4">Localisation des posts</h1>
-                <div class="card">
-                    <div class="card-body">
-                        <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
+    <main>
+    {# carte #}
+        <section> 
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="mb-4">Localisation des posts</h1>
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+    {# bouton nouveau post #}
+        {% if app.user == carnet.utilisateur %}
+        <div>
+            <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
         </div>
-    </div>
-
-    {% if app.user == carnet.utilisateur %}
-    <div>
-        <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
-    </div>
-    {% endif %}
-    
-    <div>
-        {% if carnet.photo starts with 'http' %}
-            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
-        {% else %}
-            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
         {% endif %}
-        {% if app.user != carnet.utilisateur %}
-            <p> par <strong>{{carnet.utilisateur.username}}</strong></p>
-        {{carnet.dateCarnet|date('d/m/Y')}}
-        {% endif %}
-    </div>
-
-    <hr>
-
-    <h2>Posts</h2>
-    <div>
-        {% for post in carnet.posts %}
-            <h3>{{post.titre}}</h3>
-            <p>{{post.datePost|date('d/m/Y')}}</p>
-            {% for photo in post.photos %}
-                {% if photo.imageFile starts with 'http' %}
-                    <img src="{{ photo.imageFile }}" alt="Photo du post" width="150"> 
-                {% else %}
-                    <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
-                {% endif %}
-            {% endfor %}
-            <p>{{post.texte}}</p>
-            {% if post.comments is not empty %}
-                <h5>Commentaires</h5>
-                {% for comment in post.comments %}
-                    <div>
-                        <p>{{comment.dateComment|date('d/m/Y')}}</p>
-                        <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
-                        {{comment.utilisateur.username}}</p>
-                        <p>{{comment.texte}}</p>
-                    </div>
-                {% endfor %}
+        
+        {# <div>
+            {% if carnet.photo starts with 'http' %}
+                <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+            {% else %}
+                <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
             {% endif %}
-        <hr>
-        {% endfor %}
+            {% if app.user != carnet.utilisateur %}
+                <p> par <strong>{{carnet.utilisateur.username}}</strong></p>
+            {{carnet.dateCarnet|date('d/m/Y')}}
+            {% endif %}
+        </div> #}
 
-    </div>
+    {# Posts du carnet #}
+        <section>
+            <h2>Posts</h2>
+            <div>
+                {% for post in carnet.posts %}
+                    <p>{{post.datePost|date('d/m/Y')}}</p>
+                    <h3>{{post.titre}}</h3>
+                    {% for photo in post.photos %}
+                        {% if photo.imageFile starts with 'http' %}
+                            <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
+                        {% else %}
+                            <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
+                        {% endif %}
+                    {% endfor %}
+                    <p>{{post.texte}}</p>
+                    {% if app.user %}
+                        <button type="button" class="btn btn-primary btn-sm add-comment-btn" data-post-id="{{ post.id }}">Ajouter un commentaire</button>
+                    {% endif %}
+                    {% if post.comments is not empty %}
+                        <h5>Commentaires</h5>
+                        {% for comment in post.comments %}
+                            <div>
+                                <p>{{comment.dateComment|date('d/m/Y')}}</p>
+                                <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
+                                {{comment.utilisateur.username}}</p>
+                                <p>{{comment.texte}}</p>
+                                {% if app.user %}
+                                    <button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}">Répondre</button>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                <hr>
+                {% endfor %}
+            </div>
+        </section>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="{{ asset('js/map.js') }}"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="{{ asset('js/map.js') }}"></script>
+
+    </main>
 
 {% endblock %}

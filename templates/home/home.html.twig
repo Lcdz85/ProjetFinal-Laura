@@ -6,81 +6,105 @@
     {{ parent() }}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="{{ asset('styles/map.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4">Localisation des posts</h1>
-                <div class="card">
-                    <div class="card-body">
-                        <div id="map" data-api-endpoint="{{ path('api_localisations_all') }}"></div>
+<main>
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    
+    <section>
+        <div class="container mt-4">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="mb-4">Localisation des posts</h1>
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="map" data-api-endpoint="{{ path('api_localisations_all') }}"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+    </section>
+    
+    <div>
+        <input type="button" value="Créer un nouveau carnet" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
     </div>
-
-<div>
-    <input type="button" value="Nouveau carnet" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'"> 
-</div>
-<hr>
-
-<h2>Mes Carnets créés</h2>
-<div>
-    {% for carnet in carnetsCrees %}
-        <li><h4>{{carnet.titre}}</h4></li>
-        {% if carnet.photo starts with 'http' %}
-            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
-        {% else %}
-            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
-        {% endif %}
-        <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
+    
+    <section>
+        <h2>Mes Carnets créés</h2>
         
-        <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
-    {% endfor %}
-</div>
-
-
-<h2>Commentaires sur mes carnets</h2>
-<div>
-    {% for comment in comments %}
-        <div>
-            <li><h4>{{comment.post.carnet.titre}}</h4></li>
-            <h6>{% if comment.utilisateur.photo starts with 'http' %}
-            <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
-            {% else %}
-            <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="50">
-            {% endif %}
-            {{comment.utilisateur.username}}</h6>
-            <p>{{comment.dateComment|date('d/m/Y')}}
-        <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}">Voir</a>
-
+        <div class="carnets-container">
+            {% for carnet in carnetsCrees %}
+                <div class="carnet">
+                    <div class="card" style="width: 10rem;">
+                        {% if carnet.photo starts with 'http' %}
+                            <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet">
+                        {% else %}
+                            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{carnet.titre}}</h5>
+                            <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p>
+                        </div>
+                    </div>
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-light">Voir</a>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
-
-<h2>Mes Carnets accessibles</h2>
-<div>
-    {% for carnet in carnetsAcces %}
-        <li><h4>{{carnet.titre}}</h4></li>
-        {{carnet.dateCarnet|date('d/m/Y')}}
-        {% if carnet.photo starts with 'http' %}
-        <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
-        {% else %}
-        <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
-        {% endif %}
-        <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">Voir</a>
-
-    {% endfor %}
-</div>
-
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="{{ asset('JS/map.js') }}"></script>
+    </section>
+    
+    
+    <section>
+        <h2>Commentaires sur mes carnets</h2>
+        <div>
+            {% for comment in comments %}
+                <div>
+                    <li><h4>{{comment.post.carnet.titre}}</h4></li>
+                    <h6>{% if comment.utilisateur.photo starts with 'http' %}
+                    <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
+                    {% else %}
+                    <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="50">
+                    {% endif %}
+                    {{comment.utilisateur.username}}</h6>
+                    <p>{{comment.dateComment|date('d/m/Y')}}
+                <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}">Voir</a>
+        
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+    <section>
+        <h2>Mes Carnets accessibles</h2>
+        
+        <div class="carnets-container">
+            {% for carnet in carnetsAcces %}
+                <div class="carnet">
+                    <div class="card" style="width: 10rem;">
+                        {% if carnet.photo starts with 'http' %}
+                            <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet" width="150">
+                        {% else %}
+                            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{carnet.titre}}</h5>
+                            {# <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p> #}
+                            <p class="card-text">par {{carnet.utilisateur.username}}</p>
+                            <img src="{{ asset('uploads/avatar/' ~ carnet.utilisateur.photo) }}" alt="Avatar" width="50">
+                        </div>
+                    </div>
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-light">Voir</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="{{ asset('JS/map.js') }}"></script>
+</main>
 {% endblock %}

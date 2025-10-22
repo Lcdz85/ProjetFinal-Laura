@@ -3,10 +3,10 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
+<main>
+
     <h1>Register</h1>
-
     {{ form_errors(registrationForm) }}
-
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.username) }}
         {{ form_row(registrationForm.email) }}
@@ -14,7 +14,8 @@
             label: 'Password'
         }) }}
         {{ form_row(registrationForm.photo) }}
-
         <button type="submit" class="btn">Register</button>
     {{ form_end(registrationForm) }}
+
+</main>
 {% endblock %}

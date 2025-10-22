@@ -4,13 +4,15 @@
 
 {% block body %}
 
-<h3>Nouveau carnet de voyage</h3>
-
-    {{ form_start (carnetForm) }}
-
-    {{ form_widget (carnetForm)}}       {# Les champs du formulaire #}
-    <input type="submit" value="Créer"> {# Le bouton submit du formulaire #}
-
-    {{ form_end (carnetForm)}}
+<main>
+    <h3>Nouveau carnet de voyage</h3>
+    
+        {{ form_start (carnetForm) }}
+    
+        {{ form_widget (carnetForm)}}       {# Les champs du formulaire #}
+        <input type="submit" value="Créer"> {# Le bouton submit du formulaire #}
+    
+        {{ form_end (carnetForm)}}
+</main>
 
 {% endblock %}
