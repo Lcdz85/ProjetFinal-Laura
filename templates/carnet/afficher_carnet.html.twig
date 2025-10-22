@@ -23,24 +23,6 @@
         </div>
     </div>
 
-    <!-- Modal para mostrar información detallada -->
-    {# <div class="modal fade" id="attractionModal" tabindex="-1" aria-labelledby="attractionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="attractionModalLabel">Information sur l'attraction</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="attractionModalBody">
-                    <!-- Contenido dinámico -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div> #}
-
     {% if app.user == carnet.utilisateur %}
     <div>
         <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
@@ -59,11 +41,6 @@
         {% endif %}
     </div>
 
-    {% if app.user == carnet.utilisateur %}
-        <div>
-            <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'"> 
-        </div>
-    {% endif %}
     <hr>
 
     <h2>Posts</h2>
@@ -73,7 +50,7 @@
             <p>{{post.datePost|date('d/m/Y')}}</p>
             {% for photo in post.photos %}
                 {% if photo.imageFile starts with 'http' %}
-                    <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
+                    <img src="{{ photo.imageFile }}" alt="Photo du post" width="150"> 
                 {% else %}
                     <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
                 {% endif %}
