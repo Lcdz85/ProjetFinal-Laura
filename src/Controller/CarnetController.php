@@ -156,10 +156,12 @@ final class CarnetController extends AbstractController
                 }
             }
 
+            $datePost = $localisation->getDatePost();
             $data[] = [
                 'id' => $localisation->getId(),
                 'titre' => $localisation->getTitre(),
-                'date' => $localisation->getDatePost(),
+                'date' => $datePost ? $datePost->format('Y-m-d\TH:i:sP') : null, // Format ISO 8601
+                'formattedDate' => $datePost ? $datePost->format('d/m/Y') : '',
                 'latitude' => (float) $localisation->getLatitude(),
                 'longitude' => (float) $localisation->getLongitude(),
                 'photo' => $photo,

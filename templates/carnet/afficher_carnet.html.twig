@@ -248,9 +248,9 @@
                             ${loc.photo ? `<img src="${loc.photo}" alt="${loc.titre}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
                             <div style="padding: 4px 0;">
                                 <div style="font-weight: bold; margin-bottom: 4px;">${loc.titre}</div>
-                                <div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
-                                    ${new Date(loc.date).toLocaleDateString('fr-FR')}
-                                </div>
+                                ${loc.formattedDate ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
+                                    ${loc.formattedDate}
+                                </div>` : ''}
                             </div>
                             <a href="#post-${loc.id}" 
                                style="display: inline-block; margin-top: 4px; padding: 4px 8px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;"

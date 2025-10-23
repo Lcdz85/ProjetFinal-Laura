@@ -35,7 +35,7 @@ section{
     border-radius: 2px;
 }
 .card-body{
-   background-color: rgb(233, 235, 236);
+   background-color: #f8f9fa;
    font-size: 0.7rem;
    text-align: center;
 }
