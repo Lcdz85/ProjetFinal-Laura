@@ -7,7 +7,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="{{ asset('styles/map.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
+    <style>
+        .activity-item:hover {
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        .post-container {
+            padding: 10px 0;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -45,12 +53,106 @@
     {% endmacro %}
 
     <main>
+
+        <h1>{{carnet.titre}}</h1>
+        <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
+        {% if carnet.photo starts with 'http' %}
+            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+        {% else %}
+            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+        {% endif %}
+        <p>par {{carnet.utilisateur.username}}</p>
+
+    {# Accès aux posts #}
+        <section class="border rounded p-3 mb-4" style="background: #f8f9fa;">
+            <h4 class="text-center mb-3">Accès aux posts</h4>
+            
+            {# Vue par défaut: deux colonnes #}
+            <div id="default-view">
+                <div class="row">
+                    {# Colonne gauche: activités récentes #}
+                    <div class="col-md-6">
+                        <h6>Dernières activités :</h6>
+                        <div id="activities-list" style="max-height: 300px; overflow-y: auto; background: white; padding: 10px; border-radius: 4px;">
+                            {% set activities = [] %}
+                            {# Collecter posts #}
+                            {% for post in carnet.posts %}
+                                {% set activities = activities|merge([{
+                                    'type': 'post',
+                                    'date': post.datePost,
+                                    'id': post.id,
+                                    'titre': post.titre,
+                                    'avatar': carnet.utilisateur.photo
+                                }]) %}
+                                {# Collecter commentaires de ce post #}
+                                {% for comment in post.comments %}
+                                    {% set activities = activities|merge([{
+                                        'type': 'comment',
+                                        'date': comment.dateComment,
+                                        'id': comment.id,
+                                        'postId': post.id,
+                                        'texte': comment.texte|slice(0, 50),
+                                        'avatar': comment.utilisateur.photo
+                                    }]) %}
+                                {% endfor %}
+                            {% endfor %}
+                            {# Trier par date décroissante et afficher les 10 dernières #}
+                            {% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
+                            {% for activity in activities %}
+                                <div class="d-flex align-items-center mb-2 p-2 activity-item" 
+                                     style="cursor: pointer; border-bottom: 1px solid #eee;"
+                                     data-type="{{ activity.type }}"
+                                     data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}"
+                                     data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
+                                    {% if activity.avatar %}
+                                        <img src="{{ activity.avatar }}" alt="Avatar" width="50" height="50" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                                    {% else %}
+                                        <div style="width: 50px; height: 50px; background: #ddd; border-radius: 4px; margin-right: 10px;"></div>
+                                    {% endif %}
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 0.85rem;">{{ activity.date|date('d-m-Y') }}</div>
+                                        <div style="font-weight: bold; font-size: 0.9rem;">
+                                            {% if activity.type == 'post' %}
+                                                Post
+                                            {% else %}
+                                                Commentaire
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# Colonne droite: icône carte #}
+                    <div class="col-md-6">
+                        <h6>Depuis la carte :</h6>
+                        <div style="background: white; padding: 20px; border-radius: 4px; min-height: 300px;">
+                            <div class="text-center" style="padding-top: 60px;">
+                                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="1.5" style="cursor: pointer;" onclick="showMapView()">
+                                    <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/>
+                                    <path d="M9 3v15M15 6v15"/>
+                                    <circle cx="12" cy="12" r="2" fill="#6c757d"/>
+                                </svg>
+                                <p class="text-muted mt-2">Cliquer pour voir la carte</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Vue carte plein écran #}
+            <div id="map-view" style="display: none; position: relative;">
+                <button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary mb-2" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">✕</button>
+                <div id="sidebar-map" style="height: 500px; width: 100%; background: white; border-radius: 4px;" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
+            </div>
+        </section>
+
     {# carte #}
         <section> 
             <div class="container mt-4">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="mb-4">Localisation des posts</h1>
                         <div class="card">
                             <div class="card-body">
                                 <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
@@ -85,6 +187,7 @@
             <h2>Posts</h2>
             <div>
                 {% for post in carnet.posts %}
+                    <div id="post-{{ post.id }}" class="post-container">
                     <p>{{post.datePost|date('d/m/Y')}}</p>
                     <h3>{{post.titre}}</h3>
                     {% for photo in post.photos %}
@@ -121,6 +224,7 @@
                             {% endfor %}
                         </div>
                     {% endif %}
+                    </div>{# end post-container #}
                 <hr>
                 {% endfor %}
             </div>
@@ -129,6 +233,76 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="{{ asset('js/map.js') }}"></script>
         <script>
+        // Map toggle functions
+        let sidebarMapInstance = null;
+        function showMapView() {
+          document.getElementById('default-view').style.display = 'none';
+          document.getElementById('map-view').style.display = 'block';
+          if (!sidebarMapInstance) {
+            const mapEl = document.getElementById('sidebar-map');
+            const apiEndpoint = mapEl.dataset.apiEndpoint;
+            sidebarMapInstance = L.map('sidebar-map').setView([49.0, 32.0], 6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+            }).addTo(sidebarMapInstance);
+            fetch(apiEndpoint)
+              .then(r => r.json())
+              .then(locs => {
+                if (!Array.isArray(locs) || locs.length === 0) return;
+                const markers = [];
+                locs.forEach(loc => {
+                  const lat = parseFloat(loc.latitude);
+                  const lng = parseFloat(loc.longitude);
+                  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                    const m = L.marker([lat, lng]).addTo(sidebarMapInstance);
+                    m.bindPopup(`
+                        <div>
+                            <strong>${loc.titre}</strong><br>
+                            <a href="#post-${loc.postId}" onclick="document.getElementById('post-${loc.postId}').scrollIntoView({behavior: 'smooth'}); return false;">
+                                Voir le post
+                            </a>
+                        </div>
+                    `);
+                    markers.push(m);
+                  }
+                });
+                if (markers.length > 0) {
+                  const group = new L.featureGroup(markers);
+                  sidebarMapInstance.fitBounds(group.getBounds().pad(0.1));
+                }
+              })
+              .catch(() => {});
+          } else {
+            setTimeout(() => sidebarMapInstance.invalidateSize(), 100);
+          }
+        }
+        function hideMapView() {
+          document.getElementById('map-view').style.display = 'none';
+          document.getElementById('default-view').style.display = 'block';
+        }
+
+        // Activity item click handler
+        document.addEventListener('click', function(e) {
+          const item = e.target.closest('.activity-item');
+          if (!item) return;
+          const type = item.dataset.type;
+          const postId = item.dataset.id;
+          const commentId = item.dataset.commentId;
+          
+          let targetElement = null;
+          if (type === 'comment' && commentId) {
+            targetElement = document.getElementById('comment-' + commentId);
+          } else if (type === 'post' && postId) {
+            targetElement = document.getElementById('post-' + postId);
+          }
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetElement.style.background = '#fff3cd';
+            setTimeout(() => { targetElement.style.background = ''; }, 2000);
+          }
+        });
+
         (function(){
           function toggleById(id){
             var el = document.getElementById(id);
