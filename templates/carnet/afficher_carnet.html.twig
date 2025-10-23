@@ -12,6 +12,38 @@
 
 {% block body %}
 
+    {% import _self as macros %}
+
+    {% macro render_thread(comment, carnet, isLogged) %}
+        <div id="comment-{{ comment.id }}" class="mb-3 p-2 border rounded">
+            <p class="mb-1">{{ comment.dateComment|date('d/m/Y') }}</p>
+            <p class="mb-1"><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{ comment.utilisateur.username }}" width="25"> {{ comment.utilisateur.username }}</p>
+            <p class="mb-2">{{ comment.texte }}</p>
+            <div class="d-flex gap-2 align-items-center mb-2">
+                <button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
+                    ❤ <span id="like-count-comment-{{ comment.id }}">{{ comment.usersLikes|length }}</span>
+                </button>
+                {% if isLogged %}
+                <button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}" data-target="reply-form-{{ comment.id }}">Répondre</button>
+                {% endif %}
+            </div>
+            {% if isLogged %}
+                <form id="reply-form-{{ comment.id }}" class="mt-2 reply-comment-form" style="display:none;">
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <div class="mb-2">
+                        <textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>
+                </form>
+            {% endif %}
+            <div id="children-{{ comment.id }}" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;">
+                {% for child in comment.comments %}
+                    {{ _self.render_thread(child, carnet, isLogged) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endmacro %}
+
     <main>
     {# carte #}
         <section> 
@@ -47,8 +79,8 @@
             {{carnet.dateCarnet|date('d/m/Y')}}
             {% endif %}
         </div> #}
-
-    {# Posts du carnet #}
+        
+        {# Posts du carnet #}
         <section>
             <h2>Posts</h2>
             <div>
@@ -63,22 +95,31 @@
                         {% endif %}
                     {% endfor %}
                     <p>{{post.texte}}</p>
+                    <div class="d-flex gap-2 align-items-center mb-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">
+                            ❤ <span id="like-count-post-{{ post.id }}">{{ post.usersLikes|length }}</span>
+                        </button>
+                    </div>
                     {% if app.user %}
-                        <button type="button" class="btn btn-primary btn-sm add-comment-btn" data-post-id="{{ post.id }}">Ajouter un commentaire</button>
+                        <button type="button" class="btn btn-primary btn-sm add-comment-btn" data-post-id="{{ post.id }}" data-target="post-comment-form-{{ post.id }}">Ajouter un commentaire</button>
+                        <form id="post-comment-form-{{ post.id }}" class="mt-2 post-comment-form" style="display:none;">
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <div class="mb-2">
+                                <textarea name="comment_text" rows="3" class="form-control" placeholder="Ajouter un commentaire..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Publier</button>
+                        </form>
                     {% endif %}
                     {% if post.comments is not empty %}
                         <h5>Commentaires</h5>
-                        {% for comment in post.comments %}
-                            <div>
-                                <p>{{comment.dateComment|date('d/m/Y')}}</p>
-                                <p><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{comment.utilisateur.username}}" width="25">
-                                {{comment.utilisateur.username}}</p>
-                                <p>{{comment.texte}}</p>
-                                {% if app.user %}
-                                    <button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}">Répondre</button>
+                        <div id="comments-post-{{ post.id }}">
+                            {% set isLogged = app.user ? true : false %}
+                            {% for comment in post.comments %}
+                                {% if comment.parent is null %}
+                                    {{ macros.render_thread(comment, carnet, isLogged) }}
                                 {% endif %}
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     {% endif %}
                 <hr>
                 {% endfor %}
@@ -87,6 +128,136 @@
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="{{ asset('js/map.js') }}"></script>
+        <script>
+        (function(){
+          function toggleById(id){
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+          }
+
+          document.addEventListener('click', function(e){
+            var addBtn = e.target.closest('.add-comment-btn');
+            if (addBtn) {
+              var id = addBtn.getAttribute('data-target');
+              toggleById(id);
+              return;
+            }
+            var replyBtn = e.target.closest('.reply-comment-btn');
+            if (replyBtn) {
+              var id2 = replyBtn.getAttribute('data-target');
+              toggleById(id2);
+              return;
+            }
+          });
+
+          async function toggleLike(type, id){
+            const fd = new FormData();
+            fd.append('like_target', type);
+            fd.append('like_id', id);
+            const resp = await fetch('{{ path('page_afficher_carnet', { id: carnet.id }) }}', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: fd });
+            if (!resp.ok) throw new Error('network');
+            return resp.json();
+          }
+
+          document.addEventListener('click', function(e){
+            var btnPost = e.target.closest('.like-post-btn');
+            if (btnPost) {
+              var id = btnPost.getAttribute('data-id');
+              toggleLike('post', id)
+                .then(function(json){
+                  if (!json.success) return;
+                  var countEl = document.getElementById('like-count-post-'+id);
+                  if (countEl) countEl.textContent = json.count;
+                  btnPost.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
+                })
+                .catch(function(){});
+              return;
+            }
+            var btnComment = e.target.closest('.like-comment-btn');
+            if (btnComment) {
+              var idc = btnComment.getAttribute('data-id');
+              toggleLike('comment', idc)
+                .then(function(json){
+                  if (!json.success) return;
+                  var countEl = document.getElementById('like-count-comment-'+idc);
+                  if (countEl) countEl.textContent = json.count;
+                  btnComment.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
+                })
+                .catch(function(){});
+            }
+          });
+
+          async function submitForm(form, url){
+            const fd = new FormData(form);
+            const resp = await fetch(url, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: fd });
+            if (!resp.ok) throw new Error('network');
+            return resp.json();
+          }
+
+          function buildCommentHtml(c){
+            var html = ''+
+              '<div id="comment-'+c.id+'" class="mb-3 p-2 border rounded">'+
+                '<p class="mb-1">'+c.date+'</p>'+
+                '<p class="mb-1"><img src="'+(c.photo||'')+'" alt="Photo de '+c.username+'" width="25"> '+c.username+'</p>'+
+                '<p class="mb-2"></p>'+
+                '<div class="d-flex gap-2 align-items-center mb-2">'+
+                  '<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="'+c.id+'" aria-pressed="false">❤ <span id="like-count-comment-'+c.id+'">0</span></button>'+
+                  (document.body.dataset.logged === '1' ? ('<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="'+c.id+'" data-target="reply-form-'+c.id+'">Répondre</button>') : '')+
+                '</div>'+
+                (document.body.dataset.logged === '1' ? ('<form id="reply-form-'+c.id+'" class="mt-2 reply-comment-form" style="display:none;">'+
+                  '<input type="hidden" name="parent_id" value="'+c.id+'">'+
+                  '<div class="mb-2"><textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea></div>'+
+                  '<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>'+
+                '</form>') : '')+
+                '<div id="children-'+c.id+'" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;"></div>'+
+              '</div>';
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            // Fill texte safely
+            wrapper.querySelector('p.mb-2').textContent = c.texte;
+            return wrapper.firstElementChild;
+          }
+
+          document.body.dataset.logged = '{{ app.user ? 1 : 0 }}';
+
+          document.addEventListener('submit', function(e){
+            var form = e.target;
+            if (form.matches('.post-comment-form')) {
+              e.preventDefault();
+              submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}')
+                .then(function(json){
+                  if (!json.success) return;
+                  var container = document.getElementById('comments-post-'+json.comment.postId);
+                  if (!container) {
+                    // create if absent
+                    container = document.createElement('div');
+                    container.id = 'comments-post-'+json.comment.postId;
+                    var btn = form.previousElementSibling; // approx place
+                    (btn ? btn.parentNode : form.parentNode).insertBefore(container, form.nextSibling);
+                  }
+                  var node = buildCommentHtml(json.comment);
+                  container.appendChild(node);
+                  form.reset();
+                  form.style.display = 'none';
+                })
+                .catch(function(){ /* ignore */ });
+            } else if (form.matches('.reply-comment-form')) {
+              e.preventDefault();
+              submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}')
+                .then(function(json){
+                  if (!json.success) return;
+                  var children = document.getElementById('children-'+json.comment.parentId);
+                  var node = buildCommentHtml(json.comment);
+                  if (children) children.appendChild(node);
+                  form.reset();
+                  form.style.display = 'none';
+                })
+                .catch(function(){ /* ignore */ });
+            }
+          });
+        })();
+        </script>
 
     </main>
 
