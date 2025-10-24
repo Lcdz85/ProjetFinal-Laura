@@ -2,6 +2,11 @@
 
 {% block title %}{{carnet.titre}}{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -25,7 +30,13 @@
     {% macro render_thread(comment, carnet, isLogged) %}
         <div id="comment-{{ comment.id }}" class="mb-3 p-2 border rounded">
             <p class="mb-1">{{ comment.dateComment|date('d/m/Y') }}</p>
-            <p class="mb-1"><img src="{{ comment.utilisateur.photo}}" alt="Photo de {{ comment.utilisateur.username }}" width="25"> {{ comment.utilisateur.username }}</p>
+            <p class="mb-1">
+                {% if comment.utilisateur.photo starts with 'http' %}
+                    <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                {% else %}
+                    <img src="{{ asset('uploads/avatars/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                {% endif %} {{ comment.utilisateur.username }}
+            </p>
             <p class="mb-2">{{ comment.texte }}</p>
             <div class="d-flex gap-2 align-items-center mb-2">
                 <button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
@@ -73,7 +84,7 @@
                     {# Colonne gauche: activités récentes #}
                     <div class="col-md-6">
                         <h6>Dernières activités :</h6>
-                        <div id="activities-list" style="max-height: 300px; overflow-y: auto; background: white; padding: 10px; border-radius: 4px;">
+                        <div id="activities-list" style="max-height: 300px; overflow-y: auto; background: white; padding: 5px; border-radius: 4px;">
                             {% set activities = [] %}
                             {# Collecter posts #}
                             {% for post in carnet.posts %}
@@ -92,7 +103,8 @@
                                         'id': comment.id,
                                         'postId': post.id,
                                         'texte': comment.texte|slice(0, 50),
-                                        'avatar': comment.utilisateur.photo
+                                        'avatar': comment.utilisateur.photo,
+                                        'auteur': comment.utilisateur.username,
                                     }]) %}
                                 {% endfor %}
                             {% endfor %}
@@ -105,17 +117,21 @@
                                      data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}"
                                      data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
                                     {% if activity.avatar %}
-                                        <img src="{{ activity.avatar }}" alt="Avatar" width="50" height="50" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                                        {% if activity.avatar starts with 'http' %}
+                                            <img src="{{ activity.avatar }}" alt="Avatar" width="40" height="40" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                                        {% else %}
+                                            <img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" width="40" height="40" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                                        {% endif %}
                                     {% else %}
-                                        <div style="width: 50px; height: 50px; background: #ddd; border-radius: 4px; margin-right: 10px;"></div>
+                                        <div style="width: 40px; height: 40px; background: #ddd; border-radius: 4px; margin-right: 10px;"></div>
                                     {% endif %}
                                     <div style="flex: 1;">
                                         <div style="font-size: 0.85rem;">{{ activity.date|date('d-m-Y') }}</div>
-                                        <div style="font-weight: bold; font-size: 0.9rem;">
+                                        <div style="font-size: 0.9rem;">
                                             {% if activity.type == 'post' %}
-                                                Post
+                                                <p><strong>Nouveau post</strong></p>
                                             {% else %}
-                                                Commentaire
+                                                <p><strong>Commentaire</strong> de {{activity.auteur}}</p>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -148,21 +164,6 @@
             </div>
         </section>
 
-    {# carte #}
-        <section> 
-            <div class="container mt-4">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     {# bouton nouveau post #}
         {% if app.user == carnet.utilisateur %}
         <div>
@@ -178,13 +179,46 @@
                     <div id="post-{{ post.id }}" class="post-container">
                     <p>{{post.datePost|date('d/m/Y')}}</p>
                     <h3>{{post.titre}}</h3>
-                    {% for photo in post.photos %}
+            {#carousel#}
+                    <div class="carousel-container">
+                      <div id="carouselPostPhotos" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                          {% for photo in post.photos %}
+                            <button type="button" data-bs-target="#carouselPostPhotos" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-label="Slide {{ loop.index }}"></button>
+                          {% endfor %}
+                        </div>
+
+                        <div class="carousel-inner">
+                          {% for photo in post.photos %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                              {% if photo.imageFile starts with 'http' %}
+                                <img src="{{ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
+                              {% else %}
+                                <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
+                              {% endif %}
+                            </div>
+                          {% endfor %}
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Précédent</span>
+                        </button>
+
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Suivant</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {# {% for photo in post.photos %}
                         {% if photo.imageFile starts with 'http' %}
                             <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
                         {% else %}
                             <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
                         {% endif %}
-                    {% endfor %}
+                    {% endfor %} #}
                     <p>{{post.texte}}</p>
                     <div class="d-flex gap-2 align-items-center mb-2">
                         <button type="button" class="btn btn-outline-danger btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">

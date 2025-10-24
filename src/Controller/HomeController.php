@@ -181,12 +181,12 @@ final class HomeController extends AbstractController
     }
 
     #[Route('/api/localisations/all', name: 'api_localisations_all', methods: ['GET'])]
-    public function getLocalisations(CarnetRepository $repository): JsonResponse
+    public function getLocalisations(): JsonResponse
     {
         $user = $this->getUser();
         // Inclure les carnets créés 
         $carnets = $user->getCarnetsCrees()->toArray();
-
+        
         $localisations = [];
         foreach ($carnets as $carnet) {
             foreach ($carnet->getPosts() as $post) {
@@ -232,6 +232,8 @@ final class HomeController extends AbstractController
                 'latitude' => $lat,
                 'longitude' => $lng,
                 'photo' => $photo,
+                'carnetId' => $localisation->getCarnet()->getId(),
+                'carnetTitre' => $localisation->getCarnet()->getTitre(),
             ];
         }
 

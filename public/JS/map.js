@@ -1,5 +1,5 @@
 // Map initialization and localisations display
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('load', function() {
     // Check if map element exists on the page
     const mapElement = document.getElementById('map');
     if (!mapElement) {
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            console.log (localisations);
             localisations.forEach(localisation => {
                 // Parse and validate coordinates
                 const lat = parseFloat(localisation.latitude);
@@ -39,14 +40,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (Number.isFinite(lat) && Number.isFinite(lng)) {
                     const marker = L.marker([lat, lng]).addTo(map);
 
+
+
                     // Simple popup with name
                     marker.bindPopup(`
                         <div class="marker-popup">
-                            <h5>${localisation.titre}</h5>
+                            <h5>${localisation.carnetTitre}</h5>
+                            <h6>${localisation.titre}</h6>
                             ${localisation.category ? `<span class="category-badge">${localisation.category}</span><br>` : ''}
                             ${localisation.photo ? `<img src="${localisation.photo}" class="localisation-image">` : ''}
-                            <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href = '/localisation/${localisation.id}';">
-                                Détail
+                            <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href = '/carnet/${localisation.carnetId}/#post-${localisation.id}';">
+                                Voir
                             </button>
                         </div>
                     `);

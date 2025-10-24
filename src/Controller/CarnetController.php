@@ -133,7 +133,7 @@ final class CarnetController extends AbstractController
        return $this->render('carnet/afficher_carnet.html.twig', $vars);
     }
 
-    #[Route('/api/localisations/{id}', name: 'api_localisations', methods: ['GET'])]
+    #[Route('/api/localisations/{id}', name: 'api_localisations', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function getLocalisations(PostRepository $repository, $id): JsonResponse
     {
         $localisations = $repository->findBy(['carnet' => $id]);

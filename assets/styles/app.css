@@ -52,3 +52,9 @@ section{
     padding-right: 0.5rem;
 }
 
+.carousel-container {
+  width: 75%;
+  margin: 0 auto;
+}
+
+
