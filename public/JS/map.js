@@ -41,7 +41,6 @@ window.addEventListener('load', function() {
                     const marker = L.marker([lat, lng]).addTo(map);
 
 
-
                     // Simple popup with name
                     marker.bindPopup(`
                         <div class="marker-popup">

@@ -1,0 +1,21 @@
+Corruption MySql
+Si mysql ne demarre pas ou vous n'arrivez pas a vous connecter, suivez ces pas:
+ 
+Complete Data Restoration Process:
+
+Stop MySQL service in XAMPP Control Panel How to fix the XAMPP error "MySQL shutdown unexpectedly" (3 methods)
+
+Navigate to C:\xampp\mysql\ directory XAMPP MySQL not starting on Windows — Terresquall Blog
+
+Rename the data folder to data_old XAMPP MySQL not starting on Windows — Terresquall Blog
+
+Create a new folder named data XAMPP MySQL not starting on Windows — Terresquall Blog
+
+Copy all files from the backup folder into the new data folder XAMPP MySQL not starting on Windows — Terresquall Blog
+
+From data_old, copy your custom database folders (NOT mysql, performance_schema, or phpmyadmin folders) XAMPP MySQL not starting on Windows — Terresquall Blog
+
+Restart MySQL
+ 
+
+ 

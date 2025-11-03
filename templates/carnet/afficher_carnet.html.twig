@@ -65,14 +65,17 @@
 
     <main>
 
-        <h1>{{carnet.titre}}</h1>
-        <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
         {% if carnet.photo starts with 'http' %}
-            <img src="{{ carnet.photo }}" alt="Photo du carnet" width="150">
+            {% set photo = carnet.photo %}
         {% else %}
-            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" alt="Photo du carnet" width="150">
+            {% set photo = asset('uploads/carnets/' ~ carnet.photo) %}
         {% endif %}
-        <p>par {{carnet.utilisateur.username}}</p>
+
+        <div id="presention-carnet" style="background-image: url('{{ photo }}');">
+          <h1>{{carnet.titre}}</h1>
+          <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
+          <p>par {{carnet.utilisateur.username}}</p>
+        </div>
 
     {# Accès aux posts #}
         <section class="border rounded p-3 mb-4" style="background: #f8f9fa;">

@@ -1,18 +1,160 @@
-body {
-    background-color: rgb(255, 255, 255);
+@font-face {
+    font-family: 'PermanentMarker';
+    src: url('/fonts/PermanentMarker.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+    font-family: 'Pencilant';
+    src: url('/fonts/pencilant.script.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-image: url("/img/map2.png");
+    background-image: cover;
+    background-image: center;
+}
+body a{
+    text-decoration: none;
+    color: white;
+    font-family: var(--bs-font-sans-serif);
+}
+header{
+    background-image: url("/img/map1.png");
+    background-size: cover;
+    background-position: center;
+    justify-items: center;
+    padding-bottom: 1rem;
+    margin-top: 1rem;
+    color: rgb(0, 0, 0);
+}
+header h1{
+    font-family: 'PermanentMarker'; 
+    font-size: 4rem;
+    padding: 1rem;
+}
+#user-header{
+    background-size: cover;
+    background-position: center;
+    width: 80px;
+    height: 80px;
+    border: 1px solid black;
+    border-radius: 50%;
+    position: relative;
+}
+#back-user-header{
+    width: 100%;
+    justify-items: center;
+    background-color: rgba(77, 68, 57, 0.623);
+    position: relative;
+}
+#deconnexion{
+    position: absolute;
+    right: 1rem;
+    bottom: 0;
+}
+#home{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+#home-button {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: black;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#home-button img {
+    width: 12px;
+    height: 12px;
+    stroke-width: 3px;
+    filter: invert(90%)
+}
+
+#home-button:hover {
+    background-color: #4d4439;
+}
+
 main{
     width: 70%;  
     max-width: 1140px;
     margin: auto;
 }
-h1, h2{
-    text-decoration: underline;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+
+main h1{
+    text-align: center;
+    color: white;
+    font-family: 'Pencilant';
+    font-size: 3rem;
+    padding: 1rem;
 }
-section{
+
+#presention-carnet{
+    margin-top: 2rem;
     margin-bottom: 2rem;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 150px;
+    border-radius: 80px;
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+section {
+    margin-bottom: 2rem;
+    background-color: #665a4a; /* Gris-brun */
+    color: #ffffff;
+    padding: 1.25rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    border: 1px solid #4d4439; /* Bordure plus foncée */
+}
+
+/* Amélioration de la lisibilité du texte */
+section h4, 
+section h6 {
+    color: #ffffff;
+}
+
+section .card {
+    background-color: #f8f8f8; /* Fond légèrement grisé pour un meilleur contraste */
+    color: #333333;
+    border: 1px solid #e0e0e0;
+}
+
+section .btn-outline-secondary {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+section .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Légèrement plus visible sur le fond plus foncé */
+    border-color: #ffffff;
+    box-shadow: none;
+}
+
+/* Style pour les commentaires */
+.activity-item {
+    transition: all 0.2s;
+    background-color: #f5f3f0; /* Blanc cassé chaud */
+    border: 1px solid #e0d9d1;
+}
+
+.activity-item:hover {
+    background-color: #e8e4e0 !important; /* Gris-brun très clair */
+    border-color: #d1c9c0;
 }
 
 .carnets-container{
@@ -56,5 +198,3 @@ section{
   width: 75%;
   margin: 0 auto;
 }
-
-

@@ -21,27 +21,40 @@
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     </style>
+
+    {% if app.user %}
+        <div id="user-connected">
+            <h1>{{ app.user.userIdentifier }}</h1>
+        </div>
+    {% endif %}
     
-    <section>
-        <div class="container mt-4">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="mb-4">Localisation des posts</h1>
-                        <div class="card">
-                            <div class="card-body">
-                                <div id="map" data-api-endpoint="{{ path('api_localisations_all') }}"></div>
-                            </div>
-                        </div>
+    <section class="mb-4"> 
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">Localisation des posts</h4>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-map-btn" title="Afficher/Masquer la carte">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="cursor: pointer;">
+                            <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/>
+                            <path d="M9 3v15M15 6v15"/>
+                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card">
+                    <div id="map-container" style="height: 400px; display: none; position: relative;">
+                        <div id="map" data-api-endpoint="{{ path('api_localisations_all') }}" style="height: 100%;"></div>
                     </div>
                 </div>
             </div>
+        </div>
     </section>
     
     
-    <section>
-        <h2>Mes Carnets créés</h2>
-        <div>
-            <input type="button" value="Créer un nouveau carnet" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
+    <section class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Mes Carnets créés</h4>
+            <input type="button" value="Créer un nouveau carnet" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
         </div>
         
         <div class="carnets-container">
@@ -65,31 +78,57 @@
     </section>
     
     
-    <section>
-        <h2>Commentaires sur mes carnets</h2>
-        <div>
-        <input type="button" value="Gestion Partage" class="btn btn-secondary" onclick="window.location.href='{{ path('page_partage') }}'">
-    </div>
-        <div>
-            {% for comment in comments %}
-                <div>
-                    <li><h4>{{comment.post.carnet.titre}}</h4></li>
-                    <h6>{% if comment.utilisateur.photo starts with 'http' %}
-                    <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="50">
-                    {% else %}
-                    <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="50">
-                    {% endif %}
-                    {{comment.utilisateur.username}}</h6>
-                    <p>{{comment.dateComment|date('d/m/Y')}}
-                <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}">Voir</a>
-        
-                </div>
-            {% endfor %}
-        </div>
-    </section>
+    <section class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Commentaires sur mes carnets</h4>
+                <input type="button" value="Gestion Partage" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_partage') }}'">
+            </div>
+            
+            <div class="bg-white rounded p-3" style="max-height: 400px; overflow-y: auto;">
+                {% if comments is empty %}
+                    <p class="text-muted text-center my-3">Aucune activité récente</p>
+                {% else %}
+                    <div class="row g-3">
+                        {% for comment in comments|sort((a, b) => b.dateComment <=> a.dateComment) %}
+                            <div class="col-md-6">
+                                <a href="{{ path('page_afficher_carnet', {'id': comment.post.carnet.id}) }}#post-{{ comment.post.id }}" class="text-decoration-none text-dark">
+                                    <div class="activity-item p-2 h-100 border rounded" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='white'">
+                                        <div class="d-flex align-items-start">
+                                            <div class="me-2">
+                                                {% if comment.utilisateur.photo starts with 'http' %}
+                                                    <img src="{{ comment.utilisateur.photo }}" alt="Avatar" class="rounded-circle" width="36" height="36" style="object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" class="rounded-circle" width="36" height="36" style="object-fit: cover;" onerror="this.src='https://via.placeholder.com/36';">
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong class="d-block" style="font-size: 0.9rem;">{{ comment.utilisateur.username }}</strong>
+                                                        <small class="text-muted">{{ comment.dateComment|date('d/m/Y H:i') }}</small>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <div style="font-size: 0.85rem;">
+                                                        <div class="text-muted">{{ comment.post.carnet.titre }}</div>
+                                                        <small class="text-muted">{{ comment.post.titre }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
     
-    <section>
-        <h2>Mes Carnets accessibles</h2>
+    <section class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Carnets partagés avec moi</h4>
+        </div>
         
         <div class="carnets-container">
             {% for carnet in carnetsAcces %}
@@ -104,7 +143,6 @@
                             <h5 class="card-title">{{carnet.titre}}</h5>
                             {# <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p> #}
                             <p class="card-text">par {{carnet.utilisateur.username}}</p>
-                            <img src="{{ asset('uploads/avatar/' ~ carnet.utilisateur.photo) }}" alt="Avatar" width="50">
                         </div>
                     </div>
                     <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-light">Voir</a>
@@ -114,6 +152,105 @@
     </section>
     
 
-    <script src="{{ asset('JS/map.js') }}"></script>
-</main>
+    <script>
+        // Gestion de l'affichage de la carte
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleMapBtn = document.getElementById('toggle-map-btn');
+            const mapContainer = document.getElementById('map-container');
+            let map = null;
+            
+            // Fonction pour initialiser la carte
+            function initMap() {
+                const mapElement = document.getElementById('map');
+                if (!mapElement) return;
+                
+                const apiEndpoint = mapElement.dataset.apiEndpoint;
+                if (!apiEndpoint) {
+                    console.error('API endpoint not specified');
+                    return;
+                }
+
+                // Initialiser la carte centrée sur l'Europe par défaut
+                map = L.map('map').setView([48.8566, 2.3522], 3);
+
+                // Ajouter la couche de tuiles OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Charger les marqueurs
+                fetch(apiEndpoint)
+                    .then(response => response.json())
+                    .then(localisations => {
+                        if (localisations.length === 0) {
+                            console.warn('Aucune localisation dans la BD');
+                            return;
+                        }
+
+                        const markers = [];
+                        localisations.forEach(localisation => {
+                            const lat = parseFloat(localisation.latitude);
+                            const lng = parseFloat(localisation.longitude);
+                            
+                            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                                const marker = L.marker([lat, lng]).addTo(map);
+                                markers.push(marker);
+
+                                // Créer le contenu du popup
+                                marker.bindPopup(`
+                                    <div class="marker-popup">
+                                        <h6>${localisation.carnetTitre || 'Sans titre'}</h6>
+                                        <p>${localisation.titre || ''}</p>
+                                        ${localisation.photo ? `<img src="${localisation.photo}" style="max-width: 150px; max-height: 100px;" class="img-fluid mb-2">` : ''}
+                                        <a href="/carnet/${localisation.carnetId}/#post-${localisation.id}" class="btn btn-sm btn-primary">Voir</a>
+                                    </div>
+                                `);
+                            }
+                        });
+
+                        // Ajuster la vue pour afficher tous les marqueurs
+                        if (markers.length > 0) {
+                            const group = L.featureGroup(markers);
+                            map.fitBounds(group.getBounds().pad(0.2));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur de chargement des localisations:', error);
+                    });
+            }
+            
+            // Gestion du bouton de basculement de la carte
+            if (toggleMapBtn && mapContainer) {
+                toggleMapBtn.addEventListener('click', function() {
+                    if (mapContainer.style.display === 'none') {
+                        mapContainer.style.display = 'block';
+                        // Initialiser la carte si ce n'est pas déjà fait
+                        if (!map) {
+                            initMap();
+                        } else {
+                            // Redimensionner la carte pour s'assurer qu'elle s'affiche correctement
+                            setTimeout(() => {
+                                map.invalidateSize(true);
+                                // Recentrer la carte sur les marqueurs
+                                if (map._layers) {
+                                    const markers = [];
+                                    Object.values(map._layers).forEach(layer => {
+                                        if (layer instanceof L.Marker) {
+                                            markers.push(layer);
+                                        }
+                                    });
+                                    if (markers.length > 0) {
+                                        const group = L.featureGroup(markers);
+                                        map.fitBounds(group.getBounds().pad(0.2));
+                                    }
+                                }
+                            }, 100);
+                        }
+                    } else {
+                        mapContainer.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}

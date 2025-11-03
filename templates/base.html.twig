@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
         {% block stylesheets %}
         {% endblock %}
 
@@ -12,32 +13,33 @@
         {% endblock %}
 
     </head>
-    <style>
-        header{background-color: rgba(253, 180, 22, 0.86);}
-        header {
-            color: white;
-        }
-    </style>
+    
     <body>
         <header>
-            <h1>Carnet de Voyage</h1>
-            {% if app.user %}
-            <div class="mb-3">
-                
-                You are logged in as 
-                <strong>{{ app.user.userIdentifier }}</strong>
-                {% if app.user.photo starts with 'http' %}
-                <img src="{{ app.user.photo }}" alt="Photo du carnet" width="25">
-                {% else %}
-                <img src="{{ asset('uploads/avatars/' ~ app.user.photo) }}" alt="Photo du carnet" width="25">
-                {% endif %} 
-                <a href="{{ path('app_logout') }}">Déconnexion</a><br>
+    <h1>Carnet de Voyage</h1>
+    {% if app.user %}
+        {% if app.user.photo starts with 'http' %}
+            {% set photoUrl = app.user.photo %}
+        {% else %}
+            {% set photoUrl = asset('uploads/avatars/' ~ app.user.photo) %}
+        {% endif %}
+
+        <div id="back-user-header">
+            <div id="user-header" style="background-image: url('{{ photoUrl }}');">
+            <div id="home">
+            <button onclick="window.location.href='{{ path('page_home') }}'" id="home-button">
+                <img src="{{ asset('img/house.svg') }}" alt="Accueil">
+            </button>
+        </div>
             </div>
-            
-            <input type="button" value="Home" onclick="window.location.href='{{ path('page_home') }}'"> 
-            <hr>
-            {% endif %}
-        </header>
+            <div id="deconnexion">
+                <a href="{{ path('app_logout') }}">Déconnexion</a>
+            </div>
+        </div>
+
+    {% endif %}
+</header>
+
 
         {% block body %}
         
