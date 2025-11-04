@@ -1,0 +1,51 @@
+body {
+    background-image: url("/img/carte.png");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+
+.card {
+    background-color: rgba(255, 255, 255, 0.775);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-signin {
+    width: 100%;
+}
+
+.form-control {
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    background-color: #4d4439;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #887b6c;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+/* Style pour l'effet de focus sur les champs de formulaire */
+.form-control:focus {
+    outline: none;
+    border-color: #4d4439;
+    box-shadow: 0 0 0 0.2rem rgba(77, 68, 57, 0.25);
+}

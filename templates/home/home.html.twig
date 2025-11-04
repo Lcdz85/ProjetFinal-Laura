@@ -60,18 +60,19 @@
         <div class="carnets-container">
             {% for carnet in carnetsCrees %}
                 <div class="carnet">
-                    <div class="card" style="width: 10rem;">
-                        {% if carnet.photo starts with 'http' %}
-                            <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet">
-                        {% else %}
-                            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{carnet.titre}}</h5>
-                            <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p>
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">
+                        <div class="card" style="width: 10rem;">
+                            {% if carnet.photo starts with 'http' %}
+                                <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet">
+                            {% else %}
+                                <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{carnet.titre}}</h5>
+                                <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p>
+                            </div>
                         </div>
-                    </div>
-                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-light">Voir</a>
+                    </a>
                 </div>
             {% endfor %}
         </div>
@@ -129,23 +130,23 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Carnets partagés avec moi</h4>
         </div>
-        
         <div class="carnets-container">
             {% for carnet in carnetsAcces %}
                 <div class="carnet">
-                    <div class="card" style="width: 10rem;">
-                        {% if carnet.photo starts with 'http' %}
-                            <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet" width="150">
-                        {% else %}
-                            <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{carnet.titre}}</h5>
-                            {# <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p> #}
-                            <p class="card-text">par {{carnet.utilisateur.username}}</p>
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">
+                        <div class="card" style="width: 10rem;">
+                            {% if carnet.photo starts with 'http' %}
+                                <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet" width="150">
+                            {% else %}
+                                <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet" width="150">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{carnet.titre}}</h5>
+                                {# <p class="card-text">{{carnet.dateCarnet|date('d/m/Y')}}</p> #}
+                                <p class="card-text">par {{carnet.utilisateur.username}}</p>
+                            </div>
                         </div>
-                    </div>
-                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-light">Voir</a>
+                    </a>
                 </div>
             {% endfor %}
         </div>
