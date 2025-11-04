@@ -70,8 +70,12 @@
         </div>
 
     {# Accès aux posts #}
-        <section class="border rounded p-3 mb-4" style="background: #f8f9fa;">
-            <h4 class="text-center mb-3">Accès aux posts</h4>
+        <section id="activities-section" class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Accès aux posts</h4>
+            </div>
+            <div class="card">
+                <div class="card-body">
             
             {# Vue par défaut: deux colonnes #}
             <div id="default-view">
@@ -79,7 +83,8 @@
                     {# Colonne gauche: activités récentes #}
                     <div class="col-md-6">
                         <h6>Dernières activités :</h6>
-                        <div id="activities-list" class="activities-container">
+                        <div class="activities-scroll-container">
+                            <div id="activities-list" class="activities-container">
                             {% set activities = [] %}
                             {# Collecter posts #}
                             {% for post in carnet.posts %}
@@ -133,7 +138,7 @@
                             {% endfor %}
                         </div>
                     </div>
-
+                    </div>
                     {# Colonne droite: icône carte #}
                     <div class="col-md-6">
                         <h6>Depuis la carte :</h6>
@@ -151,10 +156,10 @@
                 </div>
             </div>
 
-            {# Vue carte plein écran #}
-            <div id="map-view" class="fullscreen-map-container">
-                <button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary close-map-btn">✕</button>
-                <div id="sidebar-map" class="fullscreen-map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}"></div>
+            {# Vue carte #}
+            <div id="map-view" class="fullscreen-map-container" style="display: none; position: relative;">
+                <button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">✕</button>
+                <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}" style="height: 500px; width: 100%;"></div>
             </div>
         </section>
 
@@ -244,67 +249,117 @@
                 <hr>
                 {% endfor %}
             </div>
-        </section>
+        </div>
+    </div>
+</div>
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script src="{{ asset('js/map.js') }}"></script>
         <script>
         // Map toggle functions
-        let sidebarMapInstance = null;
-        function showMapView() {
-          document.getElementById('default-view').style.display = 'none';
-          document.getElementById('map-view').style.display = 'block';
-          if (!sidebarMapInstance) {
-            const mapEl = document.getElementById('sidebar-map');
-            const apiEndpoint = mapEl.dataset.apiEndpoint;
-            sidebarMapInstance = L.map('sidebar-map').setView([49.0, 32.0], 6);
+        let map = null;
+        
+        // Fonction pour initialiser la carte
+        function initMap() {
+            const mapElement = document.getElementById('map');
+            if (!mapElement) return;
+            
+            const apiEndpoint = mapElement.dataset.apiEndpoint;
+            if (!apiEndpoint) {
+                console.error('API endpoint not specified');
+                return;
+            }
+
+            // Initialiser la carte
+            map = L.map('map');
+
+            // Ajouter la couche de tuiles OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '© OpenStreetMap contributors'
-            }).addTo(sidebarMapInstance);
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Charger les marqueurs
             fetch(apiEndpoint)
-              .then(r => r.json())
-              .then(locs => {
-                if (!Array.isArray(locs) || locs.length === 0) return;
-                const markers = [];
-                locs.forEach(loc => {
-                  const lat = parseFloat(loc.latitude);
-                  const lng = parseFloat(loc.longitude);
-                  if (Number.isFinite(lat) && Number.isFinite(lng)) {
-                    const m = L.marker([lat, lng]).addTo(sidebarMapInstance);
-                    m.bindPopup(`
-                        <div style="min-width: 200px;">
-                            ${loc.photo ? `<img src="${loc.photo}" alt="${loc.titre}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
-                            <div style="padding: 4px 0;">
-                                <div style="font-weight: bold; margin-bottom: 4px;">${loc.titre}</div>
-                                ${loc.formattedDate ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
-                                    ${loc.formattedDate}
-                                </div>` : ''}
-                            </div>
-                            <a href="#post-${loc.id}" 
-                               style="display: inline-block; margin-top: 4px; padding: 4px 8px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;"
-                               onmouseover="this.style.background='#0056b3';"
-                               onmouseout="this.style.background='#007bff';"
-                               onclick="event.preventDefault(); document.getElementById('post-${loc.id}').scrollIntoView({behavior: 'smooth'});">
-                                Voir le post
-                            </a>
-                        </div>
-                    `);
-                    markers.push(m);
-                  }
+                .then(response => response.json())
+                .then(localisations => {
+                    if (!Array.isArray(localisations) || localisations.length === 0) {
+                        console.warn('Aucune localisation trouvée');
+                        return;
+                    }
+
+                    const markers = [];
+                    localisations.forEach(localisation => {
+                        const lat = parseFloat(localisation.latitude);
+                        const lng = parseFloat(localisation.longitude);
+                        
+                        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                            const marker = L.marker([lat, lng]).addTo(map);
+                            markers.push(marker);
+
+                            // Créer le contenu du popup
+                            marker.bindPopup(`
+                                <div style="min-width: 200px;">
+                                    ${localisation.photo ? `<img src="${localisation.photo}" alt="${localisation.titre}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
+                                    <div style="padding: 4px 0;">
+                                        <div style="font-weight: bold; margin-bottom: 4px;">${localisation.titre || 'Sans titre'}</div>
+                                        ${localisation.formattedDate ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
+                                            ${localisation.formattedDate}
+                                        </div>` : ''}
+                                    </div>
+                                    <a href="#post-${localisation.id}" 
+                                       style="display: inline-block; margin-top: 4px; padding: 4px 8px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;"
+                                       onmouseover="this.style.background='#5a6268';"
+                                       onmouseout="this.style.background='#6c757d';"
+                                       onclick="event.preventDefault(); document.getElementById('post-${localisation.id}').scrollIntoView({behavior: 'smooth'});">
+                                        Voir le post
+                                    </a>
+                                </div>
+                            `);
+                        }
+                    });
+
+                    // Ajuster la vue pour afficher tous les marqueurs
+                    if (markers.length > 0) {
+                        const group = L.featureGroup(markers);
+                        map.fitBounds(group.getBounds().pad(0.2));
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de chargement des localisations:', error);
                 });
-                if (markers.length > 0) {
-                  const group = new L.featureGroup(markers);
-                  sidebarMapInstance.fitBounds(group.getBounds().pad(0.1));
-                }
-              })
-              .catch(() => {});
-          } else {
-            setTimeout(() => sidebarMapInstance.invalidateSize(), 100);
-          }
         }
+
+        function showMapView() {
+            document.getElementById('default-view').style.display = 'none';
+            const mapView = document.getElementById('map-view');
+            mapView.style.display = 'block';
+            
+            // Initialiser la carte si ce n'est pas déjà fait
+            if (!map) {
+                initMap();
+            } else {
+                // Redimensionner la carte pour s'assurer qu'elle s'affiche correctement
+                setTimeout(() => {
+                    map.invalidateSize(true);
+                    // Recentrer la carte sur les marqueurs
+                    if (map._layers) {
+                        const markers = [];
+                        Object.values(map._layers).forEach(layer => {
+                            if (layer instanceof L.Marker) {
+                                markers.push(layer);
+                            }
+                        });
+                        if (markers.length > 0) {
+                            const group = L.featureGroup(markers);
+                            map.fitBounds(group.getBounds().pad(0.2));
+                        }
+                    }
+                }, 100);
+            }
+        }
+
         function hideMapView() {
-          document.getElementById('map-view').style.display = 'none';
-          document.getElementById('default-view').style.display = 'block';
+            document.getElementById('map-view').style.display = 'none';
+            document.getElementById('default-view').style.display = 'block';
         }
 
         // Activity item click handler

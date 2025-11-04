@@ -20,13 +20,130 @@
     border-radius: 8px;
 }
 
-/* Styles des avatars */
-.avatar-img {
+/* Styles pour la section des activités */
+#activities-section {
+    margin-bottom: 2rem;
+}
+
+#activities-section .card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+
+#activities-section .card-body {
+    padding: 1.25rem;
+}
+
+#activities-section h4 {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Conteneur des activités avec défilement */
+.activities-scroll-container {
+    max-height: 280px; /* Hauteur pour 4 activités */
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Style du titre des dernières activités */
+#activities-section h6 {
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Style de la barre de défilement */
+.activities-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activities-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.activities-scroll-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.activities-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Styles des éléments d'activité */
+.activity-item {
+    padding: 12px 15px;
+    border-radius: 0;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 10px;
+}
+
+.activity-item:hover {
+    background-color: #f8f9fa;
+}
+
+.avatar-image {
     width: 30px;
     height: 30px;
-    object-fit: cover;
     border-radius: 50%;
-    margin-right: 10px;
+    object-fit: cover;
+    margin-right: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.avatar-default {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-date {
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.activity-text {
+    font-size: 0.85rem;
+    color: #212529;
+}
+
+.activity-text p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.activity-text strong {
+    color: #212529;
+    font-weight: 600;
+}
+
+/* Style spécifique pour les commentaires */
+[data-type="comment"],
+[data-type="post"] {
+    background-color: #fff;
+    border-left: 3px solid #e9ecef;
+}
+
+[data-type="comment"]:hover,
+[data-type="post"]:hover {
+    border-left-color: #dee2e6;
 }
 
 /* Styles des commentaires */
@@ -153,16 +270,14 @@
 }
 
 .map-icon {
-    width: 120px;
-    height: 120px;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
-    margin: 0 auto;
-    display: block;
-}
-
-.map-icon path {
-    stroke: #6c757d;
+    fill: none;
+    stroke: #4d4439;
     stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .map-icon:hover path {

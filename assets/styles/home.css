@@ -1,0 +1,38 @@
+/* Styles pour la page d'accueil */
+
+/* Conteneur principal */
+.example-wrapper {
+    margin: 1em auto;
+    max-width: 800px;
+    width: 95%;
+    font: 18px/1.5 sans-serif;
+}
+
+.example-wrapper code {
+    background: #F5F5F5;
+    padding: 2px 6px;
+}
+
+/* Conteneur de la carte */
+#map-container {
+    height: 400px;
+    display: none;
+    position: relative;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+/* Section des commentaires */
+.activity-item {
+    transition: all 0.2s;
+}
+
+/* Avatars des commentaires */
+.rounded-circle {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+}

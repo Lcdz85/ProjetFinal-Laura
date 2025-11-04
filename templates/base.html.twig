@@ -16,33 +16,30 @@
     
     <body>
         <header>
-    <h1>Carnet de Voyage</h1>
-    {% if app.user %}
-        {% if app.user.photo starts with 'http' %}
-            {% set photoUrl = app.user.photo %}
-        {% else %}
-            {% set photoUrl = asset('uploads/avatars/' ~ app.user.photo) %}
-        {% endif %}
+            <h1>Carnet de Voyage</h1>
+            {% if app.user %}
+                {% if app.user.photo starts with 'http' %}
+                    {% set photoUrl = app.user.photo %}
+                {% else %}
+                    {% set photoUrl = asset('uploads/avatars/' ~ app.user.photo) %}
+                {% endif %}
 
-        <div id="back-user-header">
-            <div id="user-header" style="background-image: url('{{ photoUrl }}');">
-            <div id="home">
-            <button onclick="window.location.href='{{ path('page_home') }}'" id="home-button">
-                <img src="{{ asset('img/house.svg') }}" alt="Accueil">
-            </button>
-        </div>
-            </div>
-            <div id="deconnexion">
-                <a href="{{ path('app_logout') }}">Déconnexion</a>
-            </div>
-        </div>
-
-    {% endif %}
-</header>
-
+                <div id="back-user-header">
+                    <div id="user-header" style="background-image: url('{{ photoUrl }}');">
+                    <div id="home">
+                    <button onclick="window.location.href='{{ path('page_home') }}'" id="home-button">
+                        <img src="{{ asset('img/house.svg') }}" alt="Accueil">
+                    </button>
+                </div>
+                    </div>
+                    <div id="deconnexion">
+                        <a href="{{ path('app_logout') }}">Déconnexion</a>
+                    </div>
+                </div>
+            {% endif %}
+        </header>
 
         {% block body %}
-        
 
         {% endblock %}
     </body>
