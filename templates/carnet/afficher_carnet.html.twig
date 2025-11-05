@@ -76,68 +76,66 @@
             </div>
             <div class="card">
                 <div class="card-body">
-            
-            {# Vue par défaut: deux colonnes #}
-            <div id="default-view">
-                <div class="row">
-                    {# Colonne gauche: activités récentes #}
-                    <div class="col-md-6">
-                        <h6>Dernières activités :</h6>
-                        <div class="activities-scroll-container">
-                            <div id="activities-list" class="activities-container">
-                            {% set activities = [] %}
-                            {# Collecter posts #}
-                            {% for post in carnet.posts %}
-                                {% set activities = activities|merge([{
-                                    'type': 'post',
-                                    'date': post.datePost,
-                                    'id': post.id,
-                                    'titre': post.titre,
-                                    'avatar': carnet.utilisateur.photo
-                                }]) %}
-                                {# Collecter commentaires de ce post #}
-                                {% for comment in post.comments %}
-                                    {% set activities = activities|merge([{
-                                        'type': 'comment',
-                                        'date': comment.dateComment,
-                                        'id': comment.id,
-                                        'postId': post.id,
-                                        'texte': comment.texte|slice(0, 50),
-                                        'avatar': comment.utilisateur.photo,
-                                        'auteur': comment.utilisateur.username,
-                                    }]) %}
-                                {% endfor %}
-                            {% endfor %}
-                            {# Trier par date décroissante et afficher les 10 dernières #}
-                            {% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
-                            {% for activity in activities %}
-                                <div class="d-flex align-items-center mb-2 p-2 activity-item" 
-                                     data-type="{{ activity.type }}"
-                                     data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}"
-                                     data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
-                                    {% if activity.avatar %}
-                                        {% if activity.avatar starts with 'http' %}
-                                            <img src="{{ activity.avatar }}" alt="Avatar" class="avatar-image">
-                                        {% else %}
-                                            <img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" class="avatar-image">
-                                        {% endif %}
-                                    {% else %}
-                                        <div class="avatar-default"></div>
-                                    {% endif %}
-                                    <div class="activity-content">
-                                        <div class="activity-date">{{ activity.date|date('d-m-Y') }}</div>
-                                        <div class="activity-text">
-                                            {% if activity.type == 'post' %}
-                                                <p><strong>Nouveau post</strong></p>
-                                            {% else %}
-                                                <p><strong>Commentaire</strong> de {{activity.auteur}}</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+                  <div id="default-view">
+                      <div class="row">
+                          {# Colonne gauche: activités récentes #}
+                          <div class="col-md-6">
+                              <h6>Dernières activités :</h6>
+                              <div class="activities-scroll-container">
+                                  <div id="activities-list" class="activities-container">
+                                  {% set activities = [] %}
+                                  {# Collecter posts #}
+                                  {% for post in carnet.posts %}
+                                      {% set activities = activities|merge([{
+                                          'type': 'post',
+                                          'date': post.datePost,
+                                          'id': post.id,
+                                          'titre': post.titre,
+                                          'avatar': carnet.utilisateur.photo
+                                      }]) %}
+                                      {# Collecter commentaires de ce post #}
+                                      {% for comment in post.comments %}
+                                          {% set activities = activities|merge([{
+                                              'type': 'comment',
+                                              'date': comment.dateComment,
+                                              'id': comment.id,
+                                              'postId': post.id,
+                                              'texte': comment.texte|slice(0, 50),
+                                              'avatar': comment.utilisateur.photo,
+                                              'auteur': comment.utilisateur.username,
+                                          }]) %}
+                                      {% endfor %}
+                                  {% endfor %}
+                                  {# Trier par date décroissante et afficher les 10 dernières #}
+                                  {% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
+                                  {% for activity in activities %}
+                                      <div class="d-flex align-items-center mb-2 p-2 activity-item" 
+                                          data-type="{{ activity.type }}"
+                                          data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}"
+                                          data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
+                                          {% if activity.avatar %}
+                                              {% if activity.avatar starts with 'http' %}
+                                                  <img src="{{ activity.avatar }}" alt="Avatar" class="avatar-image">
+                                              {% else %}
+                                                  <img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" class="avatar-image">
+                                              {% endif %}
+                                          {% else %}
+                                              <div class="avatar-default"></div>
+                                          {% endif %}
+                                          <div class="activity-content">
+                                              <div class="activity-date">{{ activity.date|date('d-m-Y') }}</div>
+                                              <div class="activity-text">
+                                                  {% if activity.type == 'post' %}
+                                                      <p><strong>Nouveau post</strong></p>
+                                                  {% else %}
+                                                      <p><strong>Commentaire</strong> de {{activity.auteur}}</p>
+                                                  {% endif %}
+                                              </div>
+                                          </div>
+                                      </div>
+                                  {% endfor %}
+                              </div>
+                          </div>
                     </div>
                     {# Colonne droite: icône carte #}
                     <div class="col-md-6">
@@ -155,7 +153,6 @@
                     </div>
                 </div>
             </div>
-
             {# Vue carte #}
             <div id="map-view" class="fullscreen-map-container" style="display: none; position: relative;">
                 <button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">✕</button>
@@ -164,21 +161,24 @@
         </section>
 
     {# bouton nouveau post #}
-        {% if app.user == carnet.utilisateur %}
-        <div>
-            <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
-        </div>
-        {% endif %}
         
         {# Posts du carnet #}
         <section>
+          <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Posts</h2>
+          {% if app.user == carnet.utilisateur %}
+            <div>
+                <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
+            </div>
+          {% endif %}
+            </div>
             <div>
                 {% for post in carnet.posts %}
                     <div id="post-{{ post.id }}" class="post-container">
                     <p>{{post.datePost|date('d/m/Y')}}</p>
                     <h3>{{post.titre}}</h3>
             {#carousel#}
+                  <div id="back-carousel-container">   
                     <div class="carousel-container">
                       <div id="carouselPostPhotos" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-indicators">
@@ -210,7 +210,7 @@
                         </button>
                       </div>
                     </div>
-
+                  </div>
                     {# {% for photo in post.photos %}
                         {% if photo.imageFile starts with 'http' %}
                             <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
