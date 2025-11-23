@@ -51,7 +51,7 @@
     <section class="mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Mes Carnets créés</h4>
-            <input type="button" value="Créer un nouveau carnet" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
+            <input type="button" value="Ajouter un nouveau carnet" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
         </div>
         
         <div class="carnets-container">
@@ -75,7 +75,6 @@
         </div>
     </section>
     
-    
     <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Commentaires sur mes carnets</h4>
@@ -96,7 +95,7 @@
                                                 {% if comment.utilisateur.photo starts with 'http' %}
                                                     <img src="{{ comment.utilisateur.photo }}" alt="Avatar" class="rounded-circle">
                                                 {% else %}
-                                                    <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" class="rounded-circle" onerror="this.src='https://via.placeholder.com/36';">
+                                                    <img src="{{ asset('uploads/avatar/' ~ comment.utilisateur.photo) }}" alt="Avatar" class="rounded-circle"">
                                                 {% endif %}
                                             </div>
                                             <div class="flex-grow-1">

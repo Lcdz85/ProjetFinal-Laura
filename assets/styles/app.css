@@ -89,6 +89,8 @@ main{
     width: 70%;
     max-width: 900px;
     margin: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 main h1{

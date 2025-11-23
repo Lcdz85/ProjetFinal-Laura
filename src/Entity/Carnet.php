@@ -34,7 +34,7 @@ class Carnet
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'carnet', orphanRemoval: true, cascade: ['persist'])]
     private Collection $posts;
 
     #[ORM\ManyToOne(inversedBy: 'carnetsCrees', cascade: ['persist'])]

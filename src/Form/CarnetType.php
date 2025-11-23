@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CarnetType extends AbstractType
 {
@@ -17,6 +18,9 @@ class CarnetType extends AbstractType
         $builder
             ->add('titre', TextType::class, [
                 'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez saisir un titre pour votre carnet.'
+                    ]),
                     new Length([
                         'max' => 50,
                         'maxMessage' => 'Le titre ne peut pas dépasser 50 caractères.',
@@ -24,14 +28,21 @@ class CarnetType extends AbstractType
                 ],
                 'attr' => [
                     'maxlength' => 50,
+                    'class' => 'form-control',
+                    'placeholder' => 'Titre du carnet'
                 ],
+                'label' => 'Titre du carnet',
+                'required' => true
             ])
             ->add('photo', FileType::class, [
                 'label' => "Sélectionner une photo de couverture",
-                'mapped' => false, 
-                    // cette propriété ne sera pas affecté dans l'entité quand on envoie le formulaire. On la récuperera avec $form['photo']->getData()
-                'required' => false 
-                    // l'utilisateur n'est pas obligé d'uploader un fichier
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez sélectionner une photo de couverture pour votre carnet.'
+                    ])
+                ]
             ]);
     }
 

@@ -62,30 +62,29 @@ final class HomeController extends AbstractController
 
         $carnetForm->handleRequest($req);
         
-        if ($carnetForm->isSubmitted() && $carnetForm->isValid())
-        {
-            $em->persist($carnet);
-            $em->flush();
-
-            // $objFichier contient toutes les donnees du fichier
+        if ($carnetForm->isSubmitted() && $carnetForm->isValid()) {
             $objFichier = $carnetForm['photo']->getData();
-
-            // $nom est juste un string
-            $user = $this->getUser()->getUsername();
-            $carnetNumber = $this->getUser()->getCarnetsCrees()->count();
-            $nom = $user."_carnet-". $carnetNumber."_". bin2hex(random_bytes(8)) . "." . $objFichier->guessExtension();
             
-            // fixer le lien
-            $carnet->setPhoto($nom);
+            if ($objFichier) {
+                $em->persist($carnet);
+                $em->flush();
 
-            $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
-            $objFichier->move($dossier, $nom);
+                // Générer un nom de fichier unique
+                $user = $this->getUser()->getUsername();
+                $carnetNumber = $this->getUser()->getCarnetsCrees()->count();
+                $nom = $user."_carnet-". $carnetNumber."_". bin2hex(random_bytes(8)) . "." . $objFichier->guessExtension();
+                
+                // Enregistrer le nom du fichier dans l'entité
+                $carnet->setPhoto($nom);
 
-            $em->flush();
+                // Déplacer le fichier téléchargé
+                $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
+                $objFichier->move($dossier, $nom);
 
+                $em->flush();
 
-            return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
-            
+                return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
+            }
         } 
         else 
         {
