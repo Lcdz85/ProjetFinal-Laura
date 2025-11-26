@@ -125,9 +125,14 @@ final class HomeController extends AbstractController
     {
         $user = $this->getUser();
 
-    // formulaire de selection carnet et user pour partage
+        // Récupérer uniquement les carnets qui ont été partagés (qui ont des utilisateurs avec accès)
+        $carnetsPartages = $user->getCarnetsCrees()->filter(function($carnet) {
+            return $carnet->getUsersAcces()->count() > 0;
+        });
+
+        // formulaire de sélection carnet et user pour partage
         $carnets = $user->getCarnetsCrees();
-        $accesForm = $this->createForm(AccesType::class,null, [
+        $accesForm = $this->createForm(AccesType::class, null, [
             'carnets' => $carnets,
             'user' => $user,
         ]);
@@ -135,7 +140,6 @@ final class HomeController extends AbstractController
         $accesForm->handleRequest($request);
 
         if ($request->isXmlHttpRequest() && $accesForm->isSubmitted() && $accesForm->isValid()) {
-
             $carnet = $accesForm->get('carnet')->getData();
             $utilisateur = $accesForm->get('user')->getData();
     
@@ -167,12 +171,9 @@ final class HomeController extends AbstractController
             }
         }
 
-        $carnetsCrees = $user->getCarnetsCrees()->toArray();
-        // $invitation = $user->getInvitation()->toArray();
         $vars = [
             'accesForm' => $accesForm->createView(),
-            // 'invitation'=>$invitation,
-            'carnetsCrees' => $carnetsCrees,
+            'carnetsCrees' => $carnetsPartages, // On utilise maintenant $carnetsPartages au lieu de $carnetsCrees
             'user' => $user,
         ];
 
@@ -237,5 +238,39 @@ final class HomeController extends AbstractController
         }
 
         return new JsonResponse($data);
+    }
+
+     #[Route('/home/supprimer/{id}', name: 'supprimer_carnet', methods: ['POST'])]
+    public function supprimerCarnet(EntityManagerInterface $em, $id): Response
+    {
+        $carnet = $em->getRepository(Carnet::class)->find($id);
+
+        if ($carnet->getUtilisateur() === $this->getUser()){
+            if ($carnet->getPhoto()){
+                $photoPath = $this->getParameter('kernel.project_dir').'/public/uploads/carnets/'.$carnet->getPhoto();
+                if (file_exists($photoPath)) {
+                    unlink($photoPath);
+                }
+            }
+            $em->remove($carnet);
+            $em->flush();
+
+            $this->addFlash('success', 'Le carnet a été supprimé avec succès.');
+        }
+        return $this->redirectToRoute('page_home');
+    }
+
+     #[Route('/home/supprimer_acces/{id}', name: 'supprimer_acces', methods: ['POST'])]
+    public function supprimerAcces(EntityManagerInterface $em, $id): Response
+    {
+        $user = $this->getUser();
+        $carnet = $em->getRepository(Carnet::class)->find($id);
+
+        $carnet->removeUserAcces($user);
+
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('page_home');
     }
 }

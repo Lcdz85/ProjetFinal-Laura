@@ -21,14 +21,16 @@ class AccesType extends AbstractType
             'class' => Carnet::class,
             'choices' => $options['carnets'], 
             'choice_label' => 'titre',
-            'placeholder' => 'Carnet à partager',
-            'label' => false,
+            'placeholder' => 'Sélectionnez un carnet',
+            'label' => 'Carnet à partager',
+            'label_attr' => ['class' => 'form-label'],
         ])
         ->add('user', EntityType::class, [
             'class' => Utilisateur::class,
             'choice_label' => 'username',
-            'placeholder' => 'Utilisateur à ajouter',
-            'label' => false,
+            'placeholder' => 'Sélectionnez un utilisateur',
+            'label' => 'Utilisateur à ajouter',
+            'label_attr' => ['class' => 'form-label'],
             'query_builder' => function (EntityRepository $er) use ($user) {
                 return $er->createQueryBuilder('u')
                     ->where('u != :user')

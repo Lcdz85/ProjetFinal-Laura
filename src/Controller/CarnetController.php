@@ -80,7 +80,7 @@ final class CarnetController extends AbstractController
                }
            }
 
-           // 2) Comment/reply creation
+           // 2) Comments/réponses
            $postId = $request->request->get('post_id');
            $parentId = $request->request->get('parent_id');
            $text = $request->request->get('comment_text');
