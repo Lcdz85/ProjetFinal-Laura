@@ -4,10 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Carnet;
 use App\Entity\Post;
+use App\Entity\Utilisateur;
 use App\Entity\Invitation;
 
 use App\Form\CarnetType;
-use App\Form\PostType;  
+use App\Form\PostType;
 use App\Form\AccesType;
 use App\Repository\PostRepository;
 use App\Repository\CarnetRepository;
@@ -36,8 +37,8 @@ final class HomeController extends AbstractController
         $comments = [];
         foreach ($carnetsCrees as $carnet) {
             foreach ($carnet->getPosts() as $post) {
-                foreach ($post->getComments() as $comment) {  
-                    $comments[] = $comment;                   
+                foreach ($post->getComments() as $comment) {
+                    $comments[] = $comment;
                 }
             }
         }
@@ -48,7 +49,7 @@ final class HomeController extends AbstractController
             'comments' => $comments,
             'user' => $user,
         ];
-            
+
         return $this->render('home/home.html.twig', $vars);
     }
 
@@ -61,10 +62,10 @@ final class HomeController extends AbstractController
         $carnetForm = $this->createForm(CarnetType::class, $carnet);
 
         $carnetForm->handleRequest($req);
-        
+
         if ($carnetForm->isSubmitted() && $carnetForm->isValid()) {
             $objFichier = $carnetForm['photo']->getData();
-            
+
             if ($objFichier) {
                 $em->persist($carnet);
                 $em->flush();
@@ -72,22 +73,20 @@ final class HomeController extends AbstractController
                 // Générer un nom de fichier unique
                 $user = $this->getUser()->getUsername();
                 $carnetNumber = $this->getUser()->getCarnetsCrees()->count();
-                $nom = $user."_carnet-". $carnetNumber."_". bin2hex(random_bytes(8)) . "." . $objFichier->guessExtension();
-                
+                $nom = $user . "_carnet-" . $carnetNumber . "_" . bin2hex(random_bytes(8)) . "." . $objFichier->guessExtension();
+
                 // Enregistrer le nom du fichier dans l'entité
                 $carnet->setPhoto($nom);
 
                 // Déplacer le fichier téléchargé
-                $dossier = $this->getParameter('kernel.project_dir').'/public/uploads/carnets';
+                $dossier = $this->getParameter('kernel.project_dir') . '/public/uploads/carnets';
                 $objFichier->move($dossier, $nom);
 
                 $em->flush();
 
                 return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
             }
-        } 
-        else 
-        {
+        } else {
             $vars = ['carnetForm' => $carnetForm];
             return $this->render('forms/nouveau_carnet.html.twig', $vars);
         }
@@ -97,27 +96,23 @@ final class HomeController extends AbstractController
     public function afficherFormNouveauPost(Request $req, EntityManagerInterface $em, $id): Response
     {
         $repo = $em->getRepository(Carnet::class);
-        $carnet =$repo->find($id);
+        $carnet = $repo->find($id);
         $post = new Post();
         $post->setDatePost(new \DateTime());
         $post->setCarnet($carnet);
         $postForm = $this->createForm(PostType::class, $post);
-        
+
         $postForm->handleRequest($req);
 
-        if ($postForm->isSubmitted() && $postForm->isValid())
-        {
+        if ($postForm->isSubmitted() && $postForm->isValid()) {
             // dd($post);
             $em->persist($post);
             $em->flush();
             return $this->redirectToRoute('page_afficher_carnet', ['id' => $carnet->getId()]);
-        }
-        else
-        {
+        } else {
             $vars = ['postForm' => $postForm->createView()];
             return $this->render('forms/nouveau_post.html.twig', $vars);
         }
-
     }
 
     #[Route('/home/partage', name: 'page_partage')]
@@ -126,7 +121,7 @@ final class HomeController extends AbstractController
         $user = $this->getUser();
 
         // Récupérer uniquement les carnets qui ont été partagés (qui ont des utilisateurs avec accès)
-        $carnetsPartages = $user->getCarnetsCrees()->filter(function($carnet) {
+        $carnetsPartages = $user->getCarnetsCrees()->filter(function ($carnet) {
             return $carnet->getUsersAcces()->count() > 0;
         });
 
@@ -136,25 +131,22 @@ final class HomeController extends AbstractController
             'carnets' => $carnets,
             'user' => $user,
         ]);
-                
+
         $accesForm->handleRequest($request);
 
         if ($request->isXmlHttpRequest() && $accesForm->isSubmitted() && $accesForm->isValid()) {
             $carnet = $accesForm->get('carnet')->getData();
             $utilisateur = $accesForm->get('user')->getData();
-    
-            if ($carnet->getUsersAcces()->contains($utilisateur)) 
-            {
+
+            if ($carnet->getUsersAcces()->contains($utilisateur)) {
                 return $this->json([
                     'status' => 'warning',
                     'message' => 'Cet utilisateur a déjà accès à ce carnet.',
                 ]);
-            } 
-            else 
-            {
+            } else {
                 $carnet->addUserAcces($utilisateur);
                 $utilisateur->addCarnetAcces($carnet);
-    
+
                 $em->persist($carnet);
                 $em->persist($utilisateur);
                 $em->flush();
@@ -186,7 +178,7 @@ final class HomeController extends AbstractController
         $user = $this->getUser();
         // Inclure les carnets créés 
         $carnets = $user->getCarnetsCrees()->toArray();
-        
+
         $localisations = [];
         foreach ($carnets as $carnet) {
             foreach ($carnet->getPosts() as $post) {
@@ -206,8 +198,7 @@ final class HomeController extends AbstractController
                 if ($imageFile) {
                     if (str_starts_with($imageFile, 'http') || str_starts_with($imageFile, '/uploads/')) {
                         $photo = $imageFile;
-                    } 
-                    else {
+                    } else {
                         $photo = '/uploads/posts/' . $imageFile;
                     }
                 }
@@ -240,14 +231,14 @@ final class HomeController extends AbstractController
         return new JsonResponse($data);
     }
 
-     #[Route('/home/supprimer/{id}', name: 'supprimer_carnet', methods: ['POST'])]
+    #[Route('/home/supprimer/{id}', name: 'supprimer_carnet', methods: ['POST'])]
     public function supprimerCarnet(EntityManagerInterface $em, $id): Response
     {
         $carnet = $em->getRepository(Carnet::class)->find($id);
 
-        if ($carnet->getUtilisateur() === $this->getUser()){
-            if ($carnet->getPhoto()){
-                $photoPath = $this->getParameter('kernel.project_dir').'/public/uploads/carnets/'.$carnet->getPhoto();
+        if ($carnet->getUtilisateur() === $this->getUser()) {
+            if ($carnet->getPhoto()) {
+                $photoPath = $this->getParameter('kernel.project_dir') . '/public/uploads/carnets/' . $carnet->getPhoto();
                 if (file_exists($photoPath)) {
                     unlink($photoPath);
                 }
@@ -260,7 +251,7 @@ final class HomeController extends AbstractController
         return $this->redirectToRoute('page_home');
     }
 
-     #[Route('/home/supprimer_acces/{id}', name: 'supprimer_acces', methods: ['POST'])]
+    #[Route('/home/supprimer_acces/{id}', name: 'supprimer_acces', methods: ['POST'])]
     public function supprimerAcces(EntityManagerInterface $em, $id): Response
     {
         $user = $this->getUser();
@@ -272,5 +263,20 @@ final class HomeController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('page_home');
+    }
+
+    #[Route('/home/carnet/{carnetId}/supprimer-acces/{userId}', name: 'supprimer_acces_carnet', methods: ['POST'])]
+    public function supprimerAccesCarnet(EntityManagerInterface $em, $carnetId, $userId, Request $request): Response
+    {
+        
+        $this->isCsrfTokenValid('delete' . $carnetId . $userId, $request->request->get('_token'));
+
+        $carnet = $em->getRepository(Carnet::class)->find($carnetId);
+        $user = $em->getRepository(Utilisateur::class)->find($userId);
+
+        $carnet->removeUserAcces($user);
+        $em->flush();
+        
+        return $this->redirectToRoute('page_partage');
     }
 }

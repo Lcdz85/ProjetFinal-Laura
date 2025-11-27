@@ -1,4 +1,24 @@
 
+/* Style pour le bouton de suppression d'accès */
+.users-list {
+    margin-top: 0.5rem;
+}
+
+.users-list .btn-outline-danger {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.users-list .btn-outline-danger i {
+    font-size: 0.7rem;
+}
+
 /* Conteneur de la carte */
 #map-container {
     height: 400px;

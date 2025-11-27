@@ -11,16 +11,11 @@ body {
 main {
     flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 20px;
     width: 100%;
 }
 
 .container{
-    background-color: #665a4a;
-    color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     margin: 0 auto;
 }
