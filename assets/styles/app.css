@@ -12,6 +12,18 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'inria';
+    src: url('/fonts/InriaSerif-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'lacquer';
+    src: url('/fonts/Lacquer-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     background-image: url("/img/map2.png");
     background-image: cover;
@@ -32,8 +44,8 @@ header{
     /* margin-top: 2rem; */
 }
 header h1{
-    font-family: 'PermanentMarker'; 
-    font-size: 5rem;
+    font-family: 'inria'; 
+    font-size: 3rem;
     color: #665a4a;
     padding-bottom: 1rem;
 }
@@ -96,41 +108,33 @@ main{
 main h1{
     text-align: center;
     color: white;
-    font-family: 'Pencilant';
+    font-family: 'lacquer';
     font-size: 3rem;
-    padding: 1rem;
+    padding-bottom: 2rem;
 }
 
-#presention-carnet{
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    background-size: cover;
-    background-position: center;
-    width: 100%;
-    height: 150px;
-    border-radius: 80px;
-    position: relative;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-section {
-    margin-bottom: 2rem;
-    background-color: #665a4a;
+section{
+    /* background-color: #665a4a; */
     color: #ffffff;
-    padding: 1.25rem;
+    padding: 2rem;
+    border: 1px solid #665a4a8e;
+    border-radius: 1rem;
+    box-shadow: 0 0 5px #665a4a8e;
 }
 
 /* Amélioration de la lisibilité du texte */
+section h2,
 section h4, 
 section h6 {
     color: #ffffff;
+    font-family: 'Lacquer';
+    padding-bottom: 1rem;
 }
-
+h4{
+    font-size: 2rem;
+}
 section .card {
-    background-color: #f8f8f8; /* Fond légèrement grisé pour un meilleur contraste */
+    background-color: #f8f8f8;
     color: #333333;
     border: 1px solid #e0e0e0;
 }
@@ -146,57 +150,3 @@ section .btn-outline-secondary:hover {
     box-shadow: none;
 }
 
-/* Style pour les commentaires */
-.activity-item {
-    transition: all 0.2s;
-    background-color: #f5f3f0; /* Blanc cassé chaud */
-    border: 1px solid #e0d9d1;
-}
-
-.activity-item:hover {
-    background-color: #e8e4e0 !important; /* Gris-brun très clair */
-    border-color: #d1c9c0;
-}
-
-/* Conteneur des carnets */
-.carnets-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.carnet {
-    flex: 0 0 auto;
-    text-align: center;
-}
-
-.carnet .card {
-    width: 10rem;
-    border-radius: 3px;
-}
-
-.carnet .card-img-top {
-    width: 100%;
-    border-radius: 3px;
-
-    height: 150px;
-    object-fit: cover;
-}
-
-.card-title{
-    font-size: 0.8rem;
-}
-
-.btn-light{
-    font-size: 0.8rem;
-    border-radius: 0;
-    padding: 0;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-}
-
-.carousel-container {
-  width: 75%;
-  margin: 0 auto;
-}

@@ -90,11 +90,11 @@
     
     <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Commentaires sur mes carnets</h4>
+                <h4 class="mb-0">Commentaires</h4>
                 <input type="button" value="Gestion Partage" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_partage') }}'">
             </div>
             
-            <div class="bg-white rounded p-3" style="max-height: 400px; overflow-y: auto;">
+            <div style="max-height: 400px; overflow-y: auto;">
                 {% if comments is empty %}
                     <p class="text-muted text-center my-3">Aucune activité récente</p>
                 {% else %}

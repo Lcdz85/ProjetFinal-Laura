@@ -62,7 +62,12 @@ main {
     background-color: #887b6c;
     border: none;
 }
-
+#add-photo:hover{
+    background-color: #887b6c7d;
+}
+#toggle-map-btn:hover{
+    background-color: #887b6c7d;
+}
 /* Style pour les messages d'erreur */
 .invalid-feedback {
     color: #dc3545;

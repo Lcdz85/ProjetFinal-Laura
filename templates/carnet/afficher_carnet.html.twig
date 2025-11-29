@@ -1,102 +1,108 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{carnet.titre}}{% endblock %}
+{% block title %}
+	{{carnet.titre}}
+{% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+	{{ parent() }}
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="{{ asset('styles/map.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ asset('styles/afficherCarnet.css') }}">
+	{{ parent() }}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+	<link rel="stylesheet" href="{{ asset('styles/map.css') }}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	<link rel="stylesheet" href="{{ asset('styles/afficherCarnet.css') }}">
 {% endblock %}
 
 {% block body %}
 
-    {% import _self as macros %}
+	{% import _self as macros %}
 
-    {% macro render_thread(comment, carnet, isLogged) %}
-        <div id="comment-{{ comment.id }}" class="mb-3 p-2 border rounded">
-            <p class="mb-1">{{ comment.dateComment|date('d/m/Y') }}</p>
-            <p class="mb-1">
-                {% if comment.utilisateur.photo starts with 'http' %}
-                    <img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
-                {% else %}
-                    <img src="{{ asset('uploads/avatars/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
-                {% endif %} 
-                <strong>{{ comment.utilisateur.username }}</strong>
-            </p>
-            <p class="mb-2">{{ comment.texte }}</p>
-            <div class="d-flex gap-2 align-items-center mb-2">
-                <button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
-                    ❤ <span id="like-count-comment-{{ comment.id }}">{{ comment.usersLikes|length }}</span>
-                </button>
-                {% if isLogged %}
-                <button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}" data-target="reply-form-{{ comment.id }}">Répondre</button>
-                {% endif %}
-            </div>
-            {% if isLogged %}
-                <form id="reply-form-{{ comment.id }}" class="mt-2 reply-comment-form" style="display:none;">
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                    <div class="mb-2">
-                        <textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>
-                </form>
-            {% endif %}
-            <div id="children-{{ comment.id }}" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;">
-                {% for child in comment.comments %}
-                    {{ _self.render_thread(child, carnet, isLogged) }}
-                {% endfor %}
-            </div>
-        </div>
-    {% endmacro %}
+	{% macro render_thread(comment, carnet, isLogged) %}
+		<div id="comment-{{ comment.id }}" class="mb-3 p-2 border rounded">
+			<p class="mb-1">{{ comment.dateComment|date('d/m/Y') }}</p>
+			<p class="mb-1">
+				{% if comment.utilisateur.photo starts with 'http' %}
+					<img src="{{ comment.utilisateur.photo }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+				{% else %}
+					<img src="{{ asset('uploads/avatars/' ~ comment.utilisateur.photo) }}" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">
+				{% endif %}
+				<strong>{{ comment.utilisateur.username }}</strong>
+			</p>
+			<p class="mb-2">{{ comment.texte }}</p>
+			<div class="d-flex gap-2 align-items-center mb-2">
+				<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
+					❤
+					<span id="like-count-comment-{{ comment.id }}">{{ comment.usersLikes|length }}</span>
+				</button>
+				{% if isLogged %}
+					<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}" data-target="reply-form-{{ comment.id }}">Répondre</button>
+				{% endif %}
+			</div>
+			{% if isLogged %}
+				<form id="reply-form-{{ comment.id }}" class="mt-2 reply-comment-form" style="display:none;">
+					<input type="hidden" name="parent_id" value="{{ comment.id }}">
+					<div class="mb-2">
+						<textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea>
+					</div>
+					<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>
+				</form>
+			{% endif %}
+			<div id="children-{{ comment.id }}" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;">
+				{% for child in comment.comments %}
+					{{ _self.render_thread(child, carnet, isLogged) }}
+				{% endfor %}
+			</div>
+		</div>
+	{% endmacro %}
 
-    <main>
+	<main>
 
-        {% if carnet.photo starts with 'http' %}
-            {% set photo = carnet.photo %}
-        {% else %}
-            {% set photo = asset('uploads/carnets/' ~ carnet.photo) %}
-        {% endif %}
+		{% if carnet.photo starts with 'http' %}
+			{% set photo = carnet.photo %}
+		{% else %}
+			{% set photo = asset('uploads/carnets/' ~ carnet.photo) %}
+		{% endif %}
 
-        <h1>{{carnet.titre}}</h1>
-        <div id="presentation-carnet" style="background-image: url('{{ photo }}');">
-          <p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
-          <p>par <strong>{{carnet.utilisateur.username}}</strong></p>
-        </div>
+		<h1>{{carnet.titre}}</h1>
+		<div id="presentation-carnet" style="background-image: url('{{ photo }}');">
+			<p>{{carnet.dateCarnet|date('d/m/Y')}}</p>
+			<p>par
+				<strong>{{carnet.utilisateur.username}}</strong>
+			</p>
+		</div>
 
-    {# Accès aux posts #}
-        <section id="activities-section" class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Accès aux posts</h4>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                  <div id="default-view">
-                      <div class="row">
-                          {# Colonne gauche: activités récentes #}
-                          <div class="col-md-6">
-                              <h6>Dernières activités :</h6>
-                              <div class="activities-scroll-container">
-                                  <div id="activities-list" class="activities-container">
-                                  {% set activities = [] %}
-                                  {# Collecter posts #}
-                                  {% for post in carnet.posts %}
-                                      {% set activities = activities|merge([{
+		{# Accès aux posts #}
+		<section id="activities-section" class="mb-4">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="mb-0">Accès aux posts</h4>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<div id="default-view">
+						<div
+							class="row">
+							{# Colonne gauche: activités récentes #}
+							<div class="col-md-6">
+								<h6>Dernières activités :</h6>
+								<div class="activities-scroll-container">
+									<div id="activities-list" class="activities-container">
+										{% set activities = [] %}
+										{# Collecter posts #}
+										{% for post in carnet.posts %}
+											{% set activities = activities|merge([{
                                           'type': 'post',
                                           'date': post.datePost,
                                           'id': post.id,
                                           'titre': post.titre,
                                           'avatar': carnet.utilisateur.photo
                                       }]) %}
-                                      {# Collecter commentaires de ce post #}
-                                      {% for comment in post.comments %}
-                                          {% set activities = activities|merge([{
+											{# Collecter commentaires de ce post #}
+											{% for comment in post.comments %}
+												{% set activities = activities|merge([{
                                               'type': 'comment',
                                               'date': comment.dateComment,
                                               'id': comment.id,
@@ -105,416 +111,447 @@
                                               'avatar': comment.utilisateur.photo,
                                               'auteur': comment.utilisateur.username,
                                           }]) %}
-                                      {% endfor %}
-                                  {% endfor %}
-                                  {# Trier par date décroissante et afficher les 10 dernières #}
-                                  {% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
-                                  {% for activity in activities %}
-                                      <div class="d-flex align-items-center mb-2 p-2 activity-item" 
-                                          data-type="{{ activity.type }}"
-                                          data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}"
-                                          data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
-                                          {% if activity.avatar %}
-                                              {% if activity.avatar starts with 'http' %}
-                                                  <img src="{{ activity.avatar }}" alt="Avatar" class="avatar-image">
-                                              {% else %}
-                                                  <img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" class="avatar-image">
-                                              {% endif %}
-                                          {% else %}
-                                              <div class="avatar-default"></div>
-                                          {% endif %}
-                                          <div class="activity-content">
-                                              <div class="activity-date">{{ activity.date|date('d-m-Y') }}</div>
-                                              <div class="activity-text">
-                                                  {% if activity.type == 'post' %}
-                                                      <p><strong>Nouveau post</strong></p>
-                                                  {% else %}
-                                                      <p><strong>Commentaire</strong> de {{activity.auteur}}</p>
-                                                  {% endif %}
-                                              </div>
-                                          </div>
-                                      </div>
-                                  {% endfor %}
-                              </div>
-                          </div>
-                    </div>
-                    {# Colonne droite: icône carte #}
-                    <div class="col-md-6">
-                        <h6>Depuis la carte :</h6>
-                        <div class="map-section">
-                            <div class="map-placeholder">
-                                <svg class="map-icon" viewBox="0 0 24 24" fill="none" onclick="showMapView()">
-                                    <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/>
-                                    <path d="M9 3v15M15 6v15"/>
-                                    <circle cx="12" cy="12" r="2"/>
-                                </svg>
-                                <p>Cliquer pour voir la carte</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {# Vue carte #}
-            <div id="map-view" class="fullscreen-map-container" style="display: none; position: relative;">
-                <button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">✕</button>
-                <div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}" style="height: 500px; width: 100%;"></div>
-            </div>
-        </section>
+											{% endfor %}
+										{% endfor %}
+										{# Trier par date décroissante et afficher les 10 dernières #}
+										{% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
+										{% for activity in activities %}
+											<div class="d-flex align-items-center mb-2 p-2 activity-item" data-type="{{ activity.type }}" data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}" data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
+												{% if activity.avatar %}
+													{% if activity.avatar starts with 'http' %}
+														<img src="{{ activity.avatar }}" alt="Avatar" class="avatar-image">
+													{% else %}
+														<img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" class="avatar-image">
+													{% endif %}
+												{% else %}
+													<div class="avatar-default"></div>
+												{% endif %}
+												<div class="activity-content">
+													<div class="activity-date">{{ activity.date|date('d-m-Y') }}</div>
+													<div class="activity-text">
+														{% if activity.type == 'post' %}
+															<p>
+																<strong>Nouveau post</strong>
+															</p>
+														{% else %}
+															<p>
+																<strong>Commentaire</strong>
+																de
+																{{activity.auteur}}</p>
+														{% endif %}
+													</div>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+							{# Colonne droite: icône carte #}
+							<div class="col-md-6">
+								<h6>Depuis la carte :</h6>
+								<div class="map-section">
+									<div class="map-placeholder">
+										<svg class="map-icon" viewbox="0 0 24 24" fill="none" onclick="showMapView()">
+											<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/>
+											<path d="M9 3v15M15 6v15"/>
+											<circle cx="12" cy="12" r="2"/>
+										</svg>
+										<p>Cliquer pour voir la carte</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					{# Vue carte #}
+					<div id="map-view" class="fullscreen-map-container" style="display: none; position: relative;">
+						<button onclick="hideMapView()" class="btn btn-sm btn-outline-secondary" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">✕</button>
+						<div id="map" data-api-endpoint="{{ path('api_localisations', { id: carnet.id }) }}" style="height: 500px; width: 100%;"></div>
+					</div>
+				</section>
 
-    {# bouton nouveau post #}
-        
-        {# Posts du carnet #}
-        <section>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Posts</h2>
-          {% if app.user == carnet.utilisateur %}
-            <div>
-                <input type="button" value="Nouveau post" class="btn btn-secondary" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
-            </div>
-          {% endif %}
-            </div>
-            <div>
-                {% for post in carnet.posts %}
-                    <div id="post-{{ post.id }}" class="post-container">
-                    <p>{{post.datePost|date('d/m/Y')}}</p>
-                    <h3>{{post.titre}}</h3>
-            {#carousel#}
-                  <div id="back-carousel-container">   
-                    <div class="carousel-container">
-                      <div id="carouselPostPhotos" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                          {% for photo in post.photos %}
-                            <button type="button" data-bs-target="#carouselPostPhotos" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-label="Slide {{ loop.index }}"></button>
-                          {% endfor %}
-                        </div>
+				{# Posts du carnet #}
+				<section>
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h2>Posts</h2>
+						{% if app.user == carnet.utilisateur %}
+							<div>
+								<input type="button" value="Nouveau post" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
+							</div>
+						{% endif %}
+					</div>
+					<div>
+						{% for post in carnet.posts %}
+							<div id="post-{{ post.id }}" class="post-container">
+								<p>{{post.datePost|date('d/m/Y')}}</p>
+								<div id="contenu-post">
+									<h3>{{post.titre}}</h3>
 
-                        <div class="carousel-inner">
-                          {% for photo in post.photos %}
-                            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                              {% if photo.imageFile starts with 'http' %}
-                                <img src="{{ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
-                              {% else %}
-                                <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
-                              {% endif %}
-                            </div>
-                          {% endfor %}
-                        </div>
+									{#carousel#}
+									<div id="back-carousel-container">
+										<div class="carousel-container">
+											<div id="carouselPostPhotos" class="carousel slide" data-bs-ride="carousel">
+												<div class="carousel-indicators">
+													{% for photo in post.photos %}
+														<button type="button" data-bs-target="#carouselPostPhotos" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-label="Slide {{ loop.index }}"></button>
+													{% endfor %}
+												</div>
 
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Précédent</span>
-                        </button>
+												<div class="carousel-inner">
+													{% for photo in post.photos %}
+														<div class="carousel-item {% if loop.first %}active{% endif %}">
+															{% if photo.imageFile starts with 'http' %}
+																<img src="{{ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
+															{% else %}
+																<img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" class="d-block w-100" alt="Photo du post">
+															{% endif %}
+														</div>
+													{% endfor %}
+												</div>
 
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Suivant</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                    {# {% for photo in post.photos %}
-                        {% if photo.imageFile starts with 'http' %}
-                            <img src="{{ photo.imageFile }}" alt="Photo du post" width="150">
-                        {% else %}
-                            <img src="{{ asset('uploads/posts/') ~ photo.imageFile }}" alt="Photo du post" width="150">
-                        {% endif %}
-                    {% endfor %} #}
-                    <p>{{post.texte}}</p>
-                    <div class="d-flex gap-2 align-items-center mb-2">
-                        <button type="button" class="btn btn-outline-danger btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">
-                            ❤ <span id="like-count-post-{{ post.id }}">{{ post.usersLikes|length }}</span>
-                        </button>
-                    </div>
-                    {% if app.user %}
-                        <button type="button" class="btn btn-primary btn-sm add-comment-btn" data-post-id="{{ post.id }}" data-target="post-comment-form-{{ post.id }}">Ajouter un commentaire</button>
-                        <form id="post-comment-form-{{ post.id }}" class="mt-2 post-comment-form" style="display:none;">
-                            <input type="hidden" name="post_id" value="{{ post.id }}">
-                            <div class="mb-2">
-                                <textarea name="comment_text" rows="3" class="form-control" placeholder="Ajouter un commentaire..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm">Publier</button>
-                        </form>
-                    {% endif %}
-                    {% if post.comments is not empty %}
-                        <h5>Commentaires</h5>
-                        <div id="comments-post-{{ post.id }}">
-                            {% set isLogged = app.user ? true : false %}
-                            {% for comment in post.comments %}
-                                {% if comment.parent is null %}
-                                    {{ macros.render_thread(comment, carnet, isLogged) }}
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    </div>{# end post-container #}
-                <hr>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
+												<button class="carousel-control-prev" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="prev">
+													<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+													<span class="visually-hidden">Précédent</span>
+												</button>
 
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script>
-        // Map toggle functions
-        let map = null;
-        
-        // Fonction pour initialiser la carte
-        function initMap() {
-            const mapElement = document.getElementById('map');
-            if (!mapElement) return;
-            
-            const apiEndpoint = mapElement.dataset.apiEndpoint;
-            if (!apiEndpoint) {
-                console.error('API endpoint not specified');
-                return;
-            }
+												<button class="carousel-control-next" type="button" data-bs-target="#carouselPostPhotos" data-bs-slide="next">
+													<span class="carousel-control-next-icon" aria-hidden="true"></span>
+													<span class="visually-hidden">Suivant</span>
+												</button>
+											</div>
+										</div>
+									</div>
 
-            // Initialiser la carte
-            map = L.map('map');
+									<p>{{post.texte}}</p>
+									<div class="d-flex gap-2 align-items-center mb-2">
+										<button type="button" class="btn btn-outline-danger btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">
+											❤
+											<span id="like-count-post-{{ post.id }}">{{ post.usersLikes|length }}</span>
+										</button>
+									</div>
+									{% if app.user %}
+										<button type="button" class="btn btn-outline-secondary btn-sm" data-post-id="{{ post.id }}" data-target="post-comment-form-{{ post.id }}">💬</button>
+										<form id="post-comment-form-{{ post.id }}" class="mt-2 post-comment-form" style="display:none;">
+											<input type="hidden" name="post_id" value="{{ post.id }}">
+											<div class="mb-2">
+												<textarea name="comment_text" rows="3" class="form-control" placeholder="Ajouter un commentaire..."></textarea>
+											</div>
+											<button type="submit" class="btn btn-primary btn-sm">Publier</button>
+										</form>
+									{% endif %}
+								</div>
+								{% if post.comments is not empty %}
+									<h5>Commentaires</h5>
+									<div id="comments-post-{{ post.id }}">
+										{% set isLogged = app.user ? true : false %}
+										{% for comment in post.comments %}
+											{% if comment.parent is null %}
+												{{ macros.render_thread(comment, carnet, isLogged) }}
+											{% endif %}
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+							<hr>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
 
-            // Ajouter la couche de tuiles OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+		<script>
+			// Map toggle functions
+let map = null;
 
-            // Charger les marqueurs
-            fetch(apiEndpoint)
-                .then(response => response.json())
-                .then(localisations => {
-                    if (!Array.isArray(localisations) || localisations.length === 0) {
-                        console.warn('Aucune localisation trouvée');
-                        return;
-                    }
+// Fonction pour initialiser la carte
+function initMap() {
+const mapElement = document.getElementById('map');
+if (! mapElement) 
+return;
 
-                    const markers = [];
-                    localisations.forEach(localisation => {
-                        const lat = parseFloat(localisation.latitude);
-                        const lng = parseFloat(localisation.longitude);
-                        
-                        if (Number.isFinite(lat) && Number.isFinite(lng)) {
-                            const marker = L.marker([lat, lng]).addTo(map);
-                            markers.push(marker);
 
-                            // Créer le contenu du popup
-                            marker.bindPopup(`
+const apiEndpoint = mapElement.dataset.apiEndpoint;
+if (! apiEndpoint) {
+console.error('API endpoint not specified');
+return;
+}
+
+// Initialiser la carte
+map = L.map('map');
+
+// Ajouter la couche de tuiles OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap contributors'}).addTo(map);
+
+// Charger les marqueurs
+fetch(apiEndpoint).then(response => response.json()).then(localisations => {
+if (!Array.isArray(localisations) || localisations.length === 0) {
+console.warn('Aucune localisation trouvée');
+return;
+}
+
+const markers = [];
+localisations.forEach(localisation => {
+const lat = parseFloat(localisation.latitude);
+const lng = parseFloat(localisation.longitude);
+
+if (Number.isFinite(lat) && Number.isFinite(lng)) {
+const marker = L.marker([lat, lng]).addTo(map);
+markers.push(marker);
+
+// Créer le contenu du popup
+marker.bindPopup(`
                                 <div style="min-width: 200px;">
-                                    ${localisation.photo ? `<img src="${localisation.photo}" alt="${localisation.titre}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
+                                    ${
+localisation.photo ? `<img src="${
+localisation.photo
+}" alt="${
+localisation.titre
+}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''
+}
                                     <div style="padding: 4px 0;">
-                                        <div style="font-weight: bold; margin-bottom: 4px;">${localisation.titre || 'Sans titre'}</div>
-                                        ${localisation.formattedDate ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
-                                            ${localisation.formattedDate}
-                                        </div>` : ''}
+                                        <div style="font-weight: bold; margin-bottom: 4px;">${
+localisation.titre || 'Sans titre'
+}</div>
+                                        ${
+localisation.formattedDate ? `<div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">
+                                            ${
+localisation.formattedDate
+}
+                                        </div>` : ''
+}
                                     </div>
-                                    <a href="#post-${localisation.id}" 
+                                    <a href="#post-${
+localisation.id
+}" 
                                        style="display: inline-block; margin-top: 4px; padding: 4px 8px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;"
                                        onmouseover="this.style.background='#5a6268';"
                                        onmouseout="this.style.background='#6c757d';"
-                                       onclick="event.preventDefault(); document.getElementById('post-${localisation.id}').scrollIntoView({behavior: 'smooth'});">
+                                       onclick="event.preventDefault(); document.getElementById('post-${
+localisation.id
+}').scrollIntoView({behavior: 'smooth'});">
                                         Voir le post
                                     </a>
                                 </div>
                             `);
-                        }
-                    });
+}
+});
 
-                    // Ajuster la vue pour afficher tous les marqueurs
-                    if (markers.length > 0) {
-                        const group = L.featureGroup(markers);
-                        map.fitBounds(group.getBounds().pad(0.2));
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de chargement des localisations:', error);
-                });
-        }
+// Ajuster la vue pour afficher tous les marqueurs
+if (markers.length > 0) {
+const group = L.featureGroup(markers);
+map.fitBounds(group.getBounds().pad(0.2));
+}
+}).catch(error => {
+console.error('Erreur de chargement des localisations:', error);
+});
+}
 
-        function showMapView() {
-            document.getElementById('default-view').style.display = 'none';
-            const mapView = document.getElementById('map-view');
-            mapView.style.display = 'block';
-            
-            // Initialiser la carte si ce n'est pas déjà fait
-            if (!map) {
-                initMap();
-            } else {
-                // Redimensionner la carte pour s'assurer qu'elle s'affiche correctement
-                setTimeout(() => {
-                    map.invalidateSize(true);
-                    // Recentrer la carte sur les marqueurs
-                    if (map._layers) {
-                        const markers = [];
-                        Object.values(map._layers).forEach(layer => {
-                            if (layer instanceof L.Marker) {
-                                markers.push(layer);
-                            }
-                        });
-                        if (markers.length > 0) {
-                            const group = L.featureGroup(markers);
-                            map.fitBounds(group.getBounds().pad(0.2));
-                        }
-                    }
-                }, 100);
-            }
-        }
+function showMapView() {
+document.getElementById('default-view').style.display = 'none';
+const mapView = document.getElementById('map-view');
+mapView.style.display = 'block';
 
-        function hideMapView() {
-            document.getElementById('map-view').style.display = 'none';
-            document.getElementById('default-view').style.display = 'block';
-        }
+// Initialiser la carte si ce n'est pas déjà fait
+if (! map) {
+initMap();
+} else { // Redimensionner la carte pour s'assurer qu'elle s'affiche correctement
+setTimeout(() => {
+map.invalidateSize(true);
+// Recentrer la carte sur les marqueurs
+if (map._layers) {
+const markers = [];
+Object.values(map._layers).forEach(layer => {
+if (layer instanceof L.Marker) {
+markers.push(layer);
+}
+});
+if (markers.length > 0) {
+const group = L.featureGroup(markers);
+map.fitBounds(group.getBounds().pad(0.2));
+}
+}
+}, 100);
+}
+}
 
-        // Activity item click handler
-        document.addEventListener('click', function(e) {
-          const item = e.target.closest('.activity-item');
-          if (!item) return;
-          const type = item.dataset.type;
-          const postId = item.dataset.id;
-          const commentId = item.dataset.commentId;
-          
-          let targetElement = null;
-          if (type === 'comment' && commentId) {
-            targetElement = document.getElementById('comment-' + commentId);
-          } else if (type === 'post' && postId) {
-            targetElement = document.getElementById('post-' + postId);
-          }
-          
-          if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            targetElement.style.background = '#fff3cd';
-            setTimeout(() => { targetElement.style.background = ''; }, 2000);
-          }
-        });
+function hideMapView() {
+document.getElementById('map-view').style.display = 'none';
+document.getElementById('default-view').style.display = 'block';
+}
 
-        (function(){
-          function toggleById(id){
-            var el = document.getElementById(id);
-            if (!el) return;
-            el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
-          }
+// Activity item click handler
+document.addEventListener('click', function (e) {
+const item = e.target.closest('.activity-item');
+if (! item) 
+return;
 
-          document.addEventListener('click', function(e){
-            var addBtn = e.target.closest('.add-comment-btn');
-            if (addBtn) {
-              var id = addBtn.getAttribute('data-target');
-              toggleById(id);
-              return;
-            }
-            var replyBtn = e.target.closest('.reply-comment-btn');
-            if (replyBtn) {
-              var id2 = replyBtn.getAttribute('data-target');
-              toggleById(id2);
-              return;
-            }
-          });
+const type = item.dataset.type;
+const postId = item.dataset.id;
+const commentId = item.dataset.commentId;
 
-          async function toggleLike(type, id){
-            const fd = new FormData();
-            fd.append('like_target', type);
-            fd.append('like_id', id);
-            const resp = await fetch('{{ path('page_afficher_carnet', { id: carnet.id }) }}', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: fd });
-            if (!resp.ok) throw new Error('network');
-            return resp.json();
-          }
+let targetElement = null;
+if (type === 'comment' && commentId) {
+targetElement = document.getElementById('comment-' + commentId);
+} else if (type === 'post' && postId) {
+targetElement = document.getElementById('post-' + postId);
+}
 
-          document.addEventListener('click', function(e){
-            var btnPost = e.target.closest('.like-post-btn');
-            if (btnPost) {
-              var id = btnPost.getAttribute('data-id');
-              toggleLike('post', id)
-                .then(function(json){
-                  if (!json.success) return;
-                  var countEl = document.getElementById('like-count-post-'+id);
-                  if (countEl) countEl.textContent = json.count;
-                  btnPost.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
-                })
-                .catch(function(){});
-              return;
-            }
-            var btnComment = e.target.closest('.like-comment-btn');
-            if (btnComment) {
-              var idc = btnComment.getAttribute('data-id');
-              toggleLike('comment', idc)
-                .then(function(json){
-                  if (!json.success) return;
-                  var countEl = document.getElementById('like-count-comment-'+idc);
-                  if (countEl) countEl.textContent = json.count;
-                  btnComment.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
-                })
-                .catch(function(){});
-            }
-          });
+if (targetElement) {
+targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+targetElement.style.background = '#fff3cd';
+setTimeout(() => {
+targetElement.style.background = '';
+}, 2000);
+}
+});
 
-          async function submitForm(form, url){
-            const fd = new FormData(form);
-            const resp = await fetch(url, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: fd });
-            if (!resp.ok) throw new Error('network');
-            return resp.json();
-          }
+(function () {
+function toggleById(id) {
+var el = document.getElementById(id);
+if (! el) 
+return;
 
-          function buildCommentHtml(c){
-            var html = ''+
-              '<div id="comment-'+c.id+'" class="mb-3 p-2 border rounded">'+
-                '<p class="mb-1">'+c.date+'</p>'+
-                '<p class="mb-1"><img src="'+(c.photo||'')+'" alt="Photo de '+c.username+'" width="25"> '+c.username+'</p>'+
-                '<p class="mb-2"></p>'+
-                '<div class="d-flex gap-2 align-items-center mb-2">'+
-                  '<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="'+c.id+'" aria-pressed="false">❤ <span id="like-count-comment-'+c.id+'">0</span></button>'+
-                  (document.body.dataset.logged === '1' ? ('<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="'+c.id+'" data-target="reply-form-'+c.id+'">Répondre</button>') : '')+
-                '</div>'+
-                (document.body.dataset.logged === '1' ? ('<form id="reply-form-'+c.id+'" class="mt-2 reply-comment-form" style="display:none;">'+
-                  '<input type="hidden" name="parent_id" value="'+c.id+'">'+
-                  '<div class="mb-2"><textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea></div>'+
-                  '<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>'+
-                '</form>') : '')+
-                '<div id="children-'+c.id+'" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;"></div>'+
-              '</div>';
-            var wrapper = document.createElement('div');
-            wrapper.innerHTML = html;
-            // Fill texte safely
-            wrapper.querySelector('p.mb-2').textContent = c.texte;
-            return wrapper.firstElementChild;
-          }
+el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+}
 
-          document.body.dataset.logged = '{{ app.user ? 1 : 0 }}';
+document.addEventListener('click', function (e) {
+var addBtn = e.target.closest('.add-comment-btn');
+if (addBtn) {
+var id = addBtn.getAttribute('data-target');
+toggleById(id);
+return;
+}
+var replyBtn = e.target.closest('.reply-comment-btn');
+if (replyBtn) {
+var id2 = replyBtn.getAttribute('data-target');
+toggleById(id2);
+return;
+}
+});
 
-          document.addEventListener('submit', function(e){
-            var form = e.target;
-            if (form.matches('.post-comment-form')) {
-              e.preventDefault();
-              submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}')
-                .then(function(json){
-                  if (!json.success) return;
-                  var container = document.getElementById('comments-post-'+json.comment.postId);
-                  if (!container) {
-                    // create if absent
-                    container = document.createElement('div');
-                    container.id = 'comments-post-'+json.comment.postId;
-                    var btn = form.previousElementSibling; // approx place
-                    (btn ? btn.parentNode : form.parentNode).insertBefore(container, form.nextSibling);
-                  }
-                  var node = buildCommentHtml(json.comment);
-                  container.appendChild(node);
-                  form.reset();
-                  form.style.display = 'none';
-                })
-                .catch(function(){ /* ignore */ });
-            } else if (form.matches('.reply-comment-form')) {
-              e.preventDefault();
-              submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}')
-                .then(function(json){
-                  if (!json.success) return;
-                  var children = document.getElementById('children-'+json.comment.parentId);
-                  var node = buildCommentHtml(json.comment);
-                  if (children) children.appendChild(node);
-                  form.reset();
-                  form.style.display = 'none';
-                })
-                .catch(function(){ /* ignore */ });
-            }
-          });
-        })();
-        </script>
+async function toggleLike(type, id) {
+const fd = new FormData();
+fd.append('like_target', type);
+fd.append('like_id', id);
+const resp = await fetch('{{ path('page_afficher_carnet', { id: carnet.id }) }}', {
+method: 'POST',
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+},
+body: fd
+});
+if (! resp.ok) 
+throw new Error('network');
 
-    </main>
+return resp.json();
+}
+
+document.addEventListener('click', function (e) {
+var btnPost = e.target.closest('.like-post-btn');
+if (btnPost) {
+var id = btnPost.getAttribute('data-id');
+toggleLike('post', id).then(function (json) {
+if (! json.success) 
+return;
+
+var countEl = document.getElementById('like-count-post-' + id);
+if (countEl) 
+countEl.textContent = json.count;
+
+btnPost.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
+}).catch(function () {});
+return;
+}
+var btnComment = e.target.closest('.like-comment-btn');
+if (btnComment) {
+var idc = btnComment.getAttribute('data-id');
+toggleLike('comment', idc).then(function (json) {
+if (! json.success) 
+return;
+
+var countEl = document.getElementById('like-count-comment-' + idc);
+if (countEl) 
+countEl.textContent = json.count;
+
+btnComment.setAttribute('aria-pressed', json.liked ? 'true' : 'false');
+}).catch(function () {});
+}
+});
+
+async function submitForm(form, url) {
+const fd = new FormData(form);
+const resp = await fetch(url, {
+method: 'POST',
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+},
+body: fd
+});
+if (! resp.ok) 
+throw new Error('network');
+
+return resp.json();
+}
+
+function buildCommentHtml(c) {
+var html = '' + '<div id="comment-' + c.id + '" class="mb-3 p-2 border rounded">' + '<p class="mb-1">' + c.date + '</p>' + '<p class="mb-1"><img src="' + (
+c.photo || ''
+) + '" alt="Photo de ' + c.username + '" width="25"> ' + c.username + '</p>' + '<p class="mb-2"></p>' + '<div class="d-flex gap-2 align-items-center mb-2">' + '<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="' + c.id + '" aria-pressed="false">❤ <span id="like-count-comment-' + c.id + '">0</span></button>' + (
+document.body.dataset.logged === '1' ? ('<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="' + c.id + '" data-target="reply-form-' + c.id + '">Répondre</button>') : ''
+) + '</div>' + (
+document.body.dataset.logged === '1' ? ('<form id="reply-form-' + c.id + '" class="mt-2 reply-comment-form" style="display:none;">' + '<input type="hidden" name="parent_id" value="' + c.id + '">' + '<div class="mb-2"><textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea></div>' + '<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>' + '</form>') : ''
+) + '<div id="children-' + c.id + '" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;"></div>' + '</div>';
+var wrapper = document.createElement('div');
+wrapper.innerHTML = html;
+// Fill texte safely
+wrapper.querySelector('p.mb-2').textContent = c.texte;
+return wrapper.firstElementChild;
+}
+
+document.body.dataset.logged = '{{ app.user ? 1 : 0 }}';
+
+document.addEventListener('submit', function (e) {
+var form = e.target;
+if (form.matches('.post-comment-form')) {
+e.preventDefault();
+submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}').then(function (json) {
+if (! json.success) 
+return;
+
+var container = document.getElementById('comments-post-' + json.comment.postId);
+if (! container) { // create if absent
+container = document.createElement('div');
+container.id = 'comments-post-' + json.comment.postId;
+var btn = form.previousElementSibling; // approx place
+(btn ? btn.parentNode : form.parentNode).insertBefore(container, form.nextSibling);
+}
+var node = buildCommentHtml(json.comment);
+container.appendChild(node);
+form.reset();
+form.style.display = 'none';
+}).catch(function () { /* ignore */
+});
+} else if (form.matches('.reply-comment-form')) {
+e.preventDefault();
+submitForm(form, '{{ path('page_afficher_carnet', { id: carnet.id }) }}').then(function (json) {
+if (! json.success) 
+return;
+
+var children = document.getElementById('children-' + json.comment.parentId);
+var node = buildCommentHtml(json.comment);
+if (children) 
+children.appendChild(node);
+
+form.reset();
+form.style.display = 'none';
+}).catch(function () { /* ignore */
+});
+}
+});
+})();
+		</script>
+
+	</main>
 
 {% endblock %}
+

@@ -6,18 +6,35 @@
 
 .post-container {
     padding: 10px 0;
+    background-color: #f8f8f8;
+    padding: 1.25rem;
+    border-radius: 0.375rem;
+    color: black;
+}
+#contenu-post{
+    background-color:#665a4aba;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+#contenu-post p{
+    margin: 1rem 0
 }
 
 /* Styles de la présentation du carnet */
 #presentation-carnet {
+    width: 50%;
+    margin: 0 auto;
     background-size: cover;
     background-position: center;
     padding: 60px 20px;
     color: white;
     text-align: center;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
-    margin-bottom: 20px;
+    text-shadow: 0 0 5px rgb(0, 0, 0);
+    margin-bottom: 1.5rem;
     border-radius: 8px;
+    border: 5px solid #ffffff;
 }
 
 /* Styles pour la section des activités */
@@ -215,18 +232,18 @@
 /* Styles pour les carrousels */
 #back-carousel-container {
     width: 100%;
-    height: 350px;
+    height: 400px;
     background-color: #000000;
     border-radius: 8px;
 }
 .carousel-container {
     margin: 20px 0;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .carousel-item img {
-    object-fit: cover;
+    object-fit: contain;
+    height: 400px;
 }
 
 /* Styles pour les boutons de navigation du carrousel */
