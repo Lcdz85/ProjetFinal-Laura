@@ -40,7 +40,11 @@ main {
     background-color: #fff;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-
+.form-select:focus{
+    outline: none;
+    border-color: #4d4439;
+    box-shadow: 0 0 0 0.2rem rgba(77, 68, 57, 0.25);
+}
 .form-control:focus {
     outline: none;
     border-color: #4d4439;

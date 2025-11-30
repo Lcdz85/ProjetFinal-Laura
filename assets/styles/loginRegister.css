@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'inria';
+    src: url('/fonts/InriaSerif-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
 body {
     background-image: url("/img/carte.png");
     background-size: cover;
@@ -6,6 +12,14 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
+}
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.4); /* voile blanc à 40% d’opacité */
+    /* Tu peux remplacer par rgba(0,0,0,0.4) si tu veux assombrir */
+    z-index: -1; /* passe derrière le contenu */
 }
 
 main {
@@ -16,8 +30,18 @@ main {
     padding: 20px;
 }
 
-
+h1{
+    font-family: 'inria';
+    font-weight: bold; 
+    font-size: 3rem;
+    color: #665a4a;
+    padding-bottom: 1rem;
+    text-align: center;
+}
 .card {
+    width: 100%; 
+    max-width: 450px; 
+    padding: 20px;
     background-color: rgba(255, 255, 255, 0.775);
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

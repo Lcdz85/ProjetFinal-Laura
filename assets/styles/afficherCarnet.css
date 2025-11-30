@@ -1,4 +1,7 @@
 /* Styles principaux */
+hr{
+    margin: 2rem 0;
+}
 .activity-item:hover {
     background-color: #f0f0f0;
     border-radius: 4px;
@@ -13,6 +16,7 @@
 }
 #contenu-post{
     background-color:#665a4aba;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.606);
     padding: 1rem;
     color: white;
     text-align: center;
@@ -22,19 +26,57 @@
     margin: 1rem 0
 }
 
+.post-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.2rem;
+    margin-top: 0.2rem;
+}
+
+.add-comment-btn, .reply-comment-btn, .like-post-btn, .like-comment-btn {
+    padding: 0.1rem 0.3rem !important;
+    margin: 0 !important;
+    border: none !important;
+    background: none !important;
+    font-size: 0.9em;
+}
+
+.like-post-btn, .like-comment-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.like-post-btn[aria-pressed="true"] {
+    color: #ffffff !important;
+}
+
+.comment-text {
+    display: inline-block;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
 /* Styles de la présentation du carnet */
 #presentation-carnet {
     width: 50%;
     margin: 0 auto;
     background-size: cover;
     background-position: center;
-    padding: 60px 20px;
+    padding: 60px 100px;
     color: white;
     text-align: center;
     text-shadow: 0 0 5px rgb(0, 0, 0);
     margin-bottom: 1.5rem;
     border-radius: 8px;
     border: 5px solid #ffffff;
+}
+#presentation-carnet p{
+    background-color: #00000046;
+    padding: 0.5rem;
 }
 
 /* Styles pour la section des activités */
@@ -163,6 +205,26 @@
     border-left-color: #dee2e6;
 }
 
+/* Style du focus du champ de commentaire */
+.form-control:focus {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Style du bouton Publier */
+#post-comment-form-25 .btn-primary,
+.reply-comment-form .btn-outline-secondary {
+    background-color: transparent !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+#post-comment-form-25 .btn-primary:hover,
+.reply-comment-form .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
 /* Styles des commentaires */
 .comment-container {
     margin-left: 20px;
@@ -170,21 +232,39 @@
     border-left: 2px solid #e5e7eb;
 }
 
+/* Style pour le bouton Répondre */
+.btn.btn-outline-secondary.reply-comment-btn {
+    color: #665a4a !important;
+    border-color: #665a4a !important;
+    padding: 0.25rem;
+}
+
+.btn.btn-outline-secondary.reply-comment-btn:hover {
+    background-color: #665a4a !important;
+    color: white !important;
+}
+
+/* Conteneur des boutons d'action des commentaires */
+.d-flex.gap-2.align-items-center.mb-2 {
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
 /* Styles pour les boutons de like */
-.like-btn {
-    border: none;
-    background: none;
+.btn.like-comment-btn {
+    border: none !important;
+    background: none !important;
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 4px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    box-shadow: none !important;
+    outline: none !important;
+    /* margin-left: 10px; */
 }
 
-.like-btn:hover {
-    background-color: #f0f0f0;
-}
 
 /* Styles pour les éléments de la carte */
 #map-view {
@@ -214,10 +294,10 @@
 }
 
 /* Styles pour les formulaires de commentaires */
-.comment-form {
+/* .comment-form {
     margin-top: 15px;
     padding: 10px;
-    background-color: #f8f9fa;
+    background-color: #6996c2;
     border-radius: 4px;
 }
 
@@ -227,6 +307,10 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 8px;
+} */
+#text-comment{
+    padding: 0.5rem;
+    background-color: #eee;
 }
 
 /* Styles pour les carrousels */
@@ -266,15 +350,6 @@
     height: 10px;
     border-radius: 50%;
     margin: 0 5px;
-}
-
-/* Styles pour les avatars par défaut */
-.avatar-default {
-    width: 40px;
-    height: 40px;
-    background: #ddd;
-    border-radius: 4px;
-    margin-right: 10px;
 }
 
 /* Styles pour la section de la carte */

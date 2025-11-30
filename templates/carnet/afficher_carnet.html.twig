@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 	<link rel="stylesheet" href="{{ asset('styles/map.css') }}">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="{{ asset('styles/afficherCarnet.css') }}">
 {% endblock %}
 
@@ -32,15 +33,17 @@
 				{% endif %}
 				<strong>{{ comment.utilisateur.username }}</strong>
 			</p>
-			<p class="mb-2">{{ comment.texte }}</p>
+			<p class="mb-2" id="text-comment">{{ comment.texte }}</p>
 			<div class="d-flex gap-2 align-items-center mb-2">
-				<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
-					❤
+				{% if isLogged %}
+					<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}" data-target="reply-form-{{ comment.id }}" title="Répondre">
+															<i class="bi bi-chat-dots"></i>
+														</button>
+				{% endif %}
+				<button type="button" class="btn btn-sm like-comment-btn" data-id="{{ comment.id }}" aria-pressed="{{ isLogged and (app.user in comment.usersLikes) ? 'true' : 'false' }}">
+					<i class="bi bi-heart"></i>
 					<span id="like-count-comment-{{ comment.id }}">{{ comment.usersLikes|length }}</span>
 				</button>
-				{% if isLogged %}
-					<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="{{ comment.id }}" data-target="reply-form-{{ comment.id }}">Répondre</button>
-				{% endif %}
 			</div>
 			{% if isLogged %}
 				<form id="reply-form-{{ comment.id }}" class="mt-2 reply-comment-form" style="display:none;">
@@ -86,8 +89,7 @@
 						<div
 							class="row">
 							{# Colonne gauche: activités récentes #}
-							<div class="col-md-6">
-								<h6>Dernières activités :</h6>
+							<div class="col-md-8">
 								<div class="activities-scroll-container">
 									<div id="activities-list" class="activities-container">
 										{% set activities = [] %}
@@ -117,27 +119,23 @@
 										{% set activities = activities|sort((a, b) => b.date <=> a.date)|slice(0, 10) %}
 										{% for activity in activities %}
 											<div class="d-flex align-items-center mb-2 p-2 activity-item" data-type="{{ activity.type }}" data-id="{{ activity.type == 'post' ? activity.id : activity.postId }}" data-comment-id="{{ activity.type == 'comment' ? activity.id : '' }}">
-												{% if activity.avatar %}
 													{% if activity.avatar starts with 'http' %}
 														<img src="{{ activity.avatar }}" alt="Avatar" class="avatar-image">
 													{% else %}
 														<img src="{{ asset('uploads/avatars/' ~ activity.avatar) }}" alt="Avatar" class="avatar-image">
 													{% endif %}
-												{% else %}
-													<div class="avatar-default"></div>
-												{% endif %}
 												<div class="activity-content">
 													<div class="activity-date">{{ activity.date|date('d-m-Y') }}</div>
 													<div class="activity-text">
 														{% if activity.type == 'post' %}
 															<p>
-																<strong>Nouveau post</strong>
+																<strong>Nouveau post : {{ activity.titre }}</strong>
 															</p>
 														{% else %}
 															<p>
-																<strong>Commentaire</strong>
-																de
-																{{activity.auteur}}</p>
+																<strong>{{ activity.auteur }}</strong>: 
+																<em class="comment-text">"{{ activity.texte }}"</em>
+															</p>
 														{% endif %}
 													</div>
 												</div>
@@ -147,8 +145,7 @@
 								</div>
 							</div>
 							{# Colonne droite: icône carte #}
-							<div class="col-md-6">
-								<h6>Depuis la carte :</h6>
+							<div class="col-md-4">
 								<div class="map-section">
 									<div class="map-placeholder">
 										<svg class="map-icon" viewbox="0 0 24 24" fill="none" onclick="showMapView()">
@@ -171,18 +168,18 @@
 
 				{# Posts du carnet #}
 				<section>
-					<div class="d-flex justify-content-between align-items-center mb-3">
-						<h2>Posts</h2>
+					<div class="text-center mb-4">
+						<h2 class="mb-3">Posts</h2>
 						{% if app.user == carnet.utilisateur %}
 							<div>
-								<input type="button" value="Nouveau post" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
+								<input type="button" value="+ Nouveau post" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_post', {'id': carnet.id}) }}'">
 							</div>
 						{% endif %}
 					</div>
 					<div>
 						{% for post in carnet.posts %}
+							<p>{{post.datePost|date('d/m/Y')}}</p>
 							<div id="post-{{ post.id }}" class="post-container">
-								<p>{{post.datePost|date('d/m/Y')}}</p>
 								<div id="contenu-post">
 									<h3>{{post.titre}}</h3>
 
@@ -222,14 +219,17 @@
 									</div>
 
 									<p>{{post.texte}}</p>
-									<div class="d-flex gap-2 align-items-center mb-2">
-										<button type="button" class="btn btn-outline-danger btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">
-											❤
-											<span id="like-count-post-{{ post.id }}">{{ post.usersLikes|length }}</span>
+									<div class="post-actions">
+										{% if app.user %}
+											<button type="button" class="btn btn-outline-secondary btn-sm add-comment-btn" data-post-id="{{ post.id }}" data-target="post-comment-form-{{ post.id }}" title="Ajouter un commentaire">
+																<i class="bi bi-chat-dots"></i>
+													</button>
+										{% endif %}
+										<button type="button" class="btn btn-outline-secondary btn-sm like-post-btn" data-id="{{ post.id }}" aria-pressed="{{ app.user and (app.user in post.usersLikes) ? 'true' : 'false' }}">
+											<i class="bi bi-heart"></i> <span id="like-count-post-{{ post.id }}">{{ post.usersLikes|length }}</span>
 										</button>
 									</div>
 									{% if app.user %}
-										<button type="button" class="btn btn-outline-secondary btn-sm" data-post-id="{{ post.id }}" data-target="post-comment-form-{{ post.id }}">💬</button>
 										<form id="post-comment-form-{{ post.id }}" class="mt-2 post-comment-form" style="display:none;">
 											<input type="hidden" name="post_id" value="{{ post.id }}">
 											<div class="mb-2">
@@ -240,7 +240,6 @@
 									{% endif %}
 								</div>
 								{% if post.comments is not empty %}
-									<h5>Commentaires</h5>
 									<div id="comments-post-{{ post.id }}">
 										{% set isLogged = app.user ? true : false %}
 										{% for comment in post.comments %}

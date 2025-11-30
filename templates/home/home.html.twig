@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">Localisation des posts</h4>
+                    <h4 class="mb-0" id="localisation-posts">Localisation des posts</h4>
                     <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-map-btn" title="Afficher/Masquer la carte">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="cursor: pointer;">
                             <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/>
@@ -50,29 +50,31 @@
     
     
     <section class="mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Mes Carnets</h4>
-            <input type="button" value="+ nouveau carnet" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
+        <div class="text-center mb-4">
+            <h2 class="mb-3">Mes Carnets</h2>
+            <div>
+                <input type="button" value="+ Nouveau carnet" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_nouveau_carnet') }}'">
+            </div>
         </div>
         
         <div class="carnets-container">
             {% for carnet in carnetsCrees %}
-                <div class="carnet">
-                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">
-                        <div class="card">
+                <div class="carnet position-relative">
+                    {% if app.user and carnet.utilisateur.id == app.user.id %}
+                        <form action="{{ path('supprimer_carnet', {'id': carnet.id}) }}" method="post" class="position-absolute end-0 m-2" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce carnet ? Cette action est irréversible.');" style="z-index: 10;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ carnet.id) }}">
+                            <button type="submit" class="delete-btn" title="Supprimer ce carnet">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
                             <div class="position-relative">
                                 {% if carnet.photo starts with 'http' %}
                                     <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet">
                                 {% else %}
                                     <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet">
-                                {% endif %}
-                                {% if app.user and carnet.utilisateur.id == app.user.id %}
-                                    <form action="{{ path('supprimer_carnet', {'id': carnet.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce carnet ? Cette action est irréversible.');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ carnet.id) }}">
-                                        <button type="submit" class="delete-btn" title="Supprimer ce carnet">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </form>
                                 {% endif %}
                             </div>
                             <div class="card-body">
@@ -89,9 +91,11 @@
     </section>
     
     <section class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Commentaires</h4>
-                <input type="button" value="Gestion Partage" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_partage') }}'">
+            <div class="text-center mb-4">
+                <h2 class="mb-3">Commentaires</h2>
+                <div>
+                    <input type="button" value="Gestion des partages" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ path('page_partage') }}'">
+                </div>
             </div>
             
             <div style="max-height: 400px; overflow-y: auto;">
@@ -136,26 +140,28 @@
         </section>
     
     <section class="mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Carnets suivis</h4>
+        <div class="text-center mb-4">
+            <h2 class="mb-3">Carnets suivis</h2>
         </div>
         <div class="carnets-container">
             {% for carnet in carnetsAcces %}
-                <div class="carnet">
-                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}">
-                        <div class="card">
+                <div class="carnet position-relative">
+                    <form action="{{ path('supprimer_acces', {'id': carnet.id}) }}" method="post" 
+                          class="position-absolute end-0 m-2" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir arrêter de suivre ce carnet ?');"
+                          style="z-index: 10;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('unfollow' ~ carnet.id) }}">
+                        <button type="submit" class="delete-btn" title="Ne plus suivre ce carnet">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </form>
+                    <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
                             {% if carnet.photo starts with 'http' %}
                                 <img src="{{ carnet.photo }}" class="card-img-top" alt="Photo du carnet">
                             {% else %}
                                 <img src="{{ asset('uploads/carnets/' ~ carnet.photo) }}" class="card-img-top" alt="Photo du carnet">
                             {% endif %}
-                            <form action="{{ path('supprimer_acces', {'id': carnet.id}) }}" method="post" 
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir arrêter de suivre ce carnet ?')";>
-                                <input type="hidden" name="_token" value="{{ csrf_token('unfollow' ~ carnet.id) }}">
-                                <button type="submit" class="delete-btn" title="Ne plus suivre ce carnet">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </form>
                             <div class="card-body">
                                 <h5 class="card-title">{{carnet.titre}}</h5>
                                 <p class="card-text">par <strong>{{carnet.utilisateur.username}}</strong></p>
