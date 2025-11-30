@@ -218,15 +218,18 @@
                                 const marker = L.marker([lat, lng]).addTo(map);
                                 markers.push(marker);
 
-                                // Créer le contenu du popup
-                                marker.bindPopup(`
+                                // Créer le contenu du popup simplifié
+                                const popupContent = `
                                     <div class="marker-popup">
-                                        <h6>${localisation.carnetTitre || 'Sans titre'}</h6>
-                                        <p>${localisation.titre || ''}</p>
-                                        ${localisation.photo ? `<img src="${localisation.photo}" style="max-width: 150px; max-height: 100px;" class="img-fluid mb-2">` : ''}
-                                        <a href="/carnet/${localisation.carnetId}/#post-${localisation.id}" class="btn btn-sm btn-primary">Voir</a>
+                                        <h5>${localisation.carnetTitre || 'Carnet de voyage'}</h5>
+                                        ${localisation.titre ? `<div>${localisation.titre}</div>` : ''}
+                                        ${localisation.photo ? `<img src="${localisation.photo}" alt="${localisation.titre || 'Image du lieu'}">` : ''}
+                                        <a href="/carnet/${localisation.carnetId}/#post-${localisation.id}" class="btn-popup">
+                                            Voir le post
+                                        </a>
                                     </div>
-                                `);
+                                `;
+                                marker.bindPopup(popupContent);
                             }
                         });
 

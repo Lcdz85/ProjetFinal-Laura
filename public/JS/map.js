@@ -41,18 +41,18 @@ window.addEventListener('load', function() {
                     const marker = L.marker([lat, lng]).addTo(map);
 
 
-                    // Simple popup with name
-                    marker.bindPopup(`
+                    // Popup simplifié
+                    const popupContent = `
                         <div class="marker-popup">
-                            <h5>${localisation.carnetTitre}</h5>
-                            <h6>${localisation.titre}</h6>
-                            ${localisation.category ? `<span class="category-badge">${localisation.category}</span><br>` : ''}
-                            ${localisation.photo ? `<img src="${localisation.photo}" class="localisation-image">` : ''}
-                            <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href = '/carnet/${localisation.carnetId}/#post-${localisation.id}';">
-                                Voir
-                            </button>
+                            <h5>${localisation.carnetTitre || 'Carnet de voyage'}</h5>
+                            ${localisation.titre ? `<div>${localisation.titre}</div>` : ''}
+                            ${localisation.photo ? `<img src="${localisation.photo}" alt="${localisation.titre || 'Image du lieu'}">` : ''}
+                            <a href="/carnet/${localisation.carnetId}/#post-${localisation.id}" class="btn-popup">
+                                Voir le post
+                            </a>
                         </div>
-                    `);
+                    `;
+                    marker.bindPopup(popupContent);
                 } else {
                     console.warn('Coordonnées invalides pour la localisation', localisation);
                 }
