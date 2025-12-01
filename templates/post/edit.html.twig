@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le post - {{ post.titre }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('styles/nouveauCarnetPost.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<main>
+    <h1>Modifier le post</h1>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label">Localisation :</label>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-map-btn" title="Afficher/Masquer la carte">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div id="map-container" class="mb-3" style="height: 300px; display: none;">
+                                    <div id="map" style="height: 100%;"></div>
+                                </div>
+                                {{ form_widget(form.latitude, {'attr': {'class': 'd-none'}}) }}
+                                {{ form_widget(form.longitude, {'attr': {'class': 'd-none'}}) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.titre, {'attr': {'class': 'form-control' ~ (form.titre.vars.valid ? '' : ' is-invalid')}}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.titre) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.texte, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.texte, {'attr': {
+                                    'class': 'form-control' ~ (form.texte.vars.valid ? '' : ' is-invalid'),
+                                    'rows': 5
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.texte) }}
+                                </div>
+                            </div>
+
+                            {# Section des photos existantes #}
+                            <div class="mb-4">
+                                <h5 class="mb-3">Photos existantes</h5>
+                                <div class="row g-3">
+                                    {% for photo in post.photos %}
+                                        <div class="col-6 col-md-4 col-lg-3">
+                                            <div class="card h-100">
+                                                {% if photo.imageFile starts with 'http' %}
+                                                    <img src="{{ photo.imageFile }}" class="card-img-top" alt="Photo du post" style="height: 150px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{{ asset('uploads/posts/' ~ photo.imageFile) }}" class="card-img-top" alt="Photo du post" style="height: 150px; object-fit: cover;">
+                                                {% endif %}
+                                                <div class="card-body p-2 text-center">
+                                                    <form method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')" class="d-inline">
+                                                        <input type="hidden" name="_method" value="POST">
+                                                        <input type="hidden" name="delete_photo" value="{{ photo.id }}">
+                                                        <button type="submit" class="btn btn-sm btn-danger w-100">
+                                                            <i class="bi bi-trash"></i> Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-12">
+                                            <div class="alert alert-info mb-0">Aucune photo pour ce post.</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {# Champ pour ajouter de nouvelles photos #}
+                            <div class="mb-4">
+                                <h5>Ajouter des photos</h5>
+                                {{ form_row(form.photos, {
+                                    'label': false,
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'multiple': 'multiple',
+                                        'accept': 'image/*'
+                                    }
+                                }) }}
+                                <div class="form-text">Sélectionnez une ou plusieurs photos à ajouter.</div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-save"></i> Enregistrer les modifications
+                                </button>
+                                <a href="{{ path('page_afficher_carnet', {'id': post.carnet.id}) }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Annuler
+                                </a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialisation de la carte
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer les coordonnées actuelles
+            const lat = {{ form.latitude.vars.value ? form.latitude.vars.value : 46.603354 }};
+            const lng = {{ form.longitude.vars.value ? form.longitude.vars.value : 1.888334 }};
+            
+            // Initialiser la carte
+            const map = L.map('map').setView([lat, lng], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Ajouter un marqueur
+            let marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+
+            // Mettre à jour les champs cachés lorsque le marqueur est déplacé
+            marker.on('dragend', function(e) {
+                const position = marker.getLatLng();
+                document.getElementById('{{ form.latitude.vars.id }}').value = position.lat;
+                document.getElementById('{{ form.longitude.vars.id }}').value = position.lng;
+            });
+
+            // Mettre à jour le marqueur lorsque la carte est cliquée
+            map.on('click', function(e) {
+                const newLatLng = e.latlng;
+                marker.setLatLng(newLatLng);
+                document.getElementById('{{ form.latitude.vars.id }}').value = newLatLng.lat;
+                document.getElementById('{{ form.longitude.vars.id }}').value = newLatLng.lng;
+            });
+
+            // Bouton pour afficher/masquer la carte
+            document.getElementById('toggle-map-btn').addEventListener('click', function() {
+                const mapContainer = document.getElementById('map-container');
+                if (mapContainer.style.display === 'none') {
+                    mapContainer.style.display = 'block';
+                    setTimeout(() => map.invalidateSize(), 100);
+                } else {
+                    mapContainer.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% endblock %}

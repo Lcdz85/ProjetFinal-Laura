@@ -472,18 +472,38 @@ return resp.json();
 }
 
 function buildCommentHtml(c) {
-var html = '' + '<div id="comment-' + c.id + '" class="mb-3 p-2 border rounded">' + '<p class="mb-1">' + c.date + '</p>' + '<p class="mb-1"><img src="' + (
-c.photo || ''
-) + '" alt="Photo de ' + c.username + '" width="25"> ' + c.username + '</p>' + '<p class="mb-2"></p>' + '<div class="d-flex gap-2 align-items-center mb-2">' + '<button type="button" class="btn btn-outline-danger btn-sm like-comment-btn" data-id="' + c.id + '" aria-pressed="false">❤ <span id="like-count-comment-' + c.id + '">0</span></button>' + (
-document.body.dataset.logged === '1' ? ('<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="' + c.id + '" data-target="reply-form-' + c.id + '">Répondre</button>') : ''
-) + '</div>' + (
-document.body.dataset.logged === '1' ? ('<form id="reply-form-' + c.id + '" class="mt-2 reply-comment-form" style="display:none;">' + '<input type="hidden" name="parent_id" value="' + c.id + '">' + '<div class="mb-2"><textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea></div>' + '<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>' + '</form>') : ''
-) + '<div id="children-' + c.id + '" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;"></div>' + '</div>';
-var wrapper = document.createElement('div');
-wrapper.innerHTML = html;
-// Fill texte safely
-wrapper.querySelector('p.mb-2').textContent = c.texte;
-return wrapper.firstElementChild;
+    var html = '' +
+        '<div id="comment-' + c.id + '" class="mb-3 p-2 border rounded">' +
+        '<p class="mb-1">' + c.date + '</p>' +
+        '<p class="mb-1">' +
+        (c.photo ? '<img src="' + c.photo + '" alt="Avatar" width="30" height="30" style="object-fit: cover; border-radius: 50%; margin-right: 10px;">' : '') +
+        '<strong>' + c.username + '</strong>' +
+        '</p>' +
+        '<p class="mb-2" id="text-comment">' + c.texte + '</p>' +
+        '<div class="d-flex gap-2 align-items-center mb-2">' +
+        (document.body.dataset.logged === '1' ? 
+            '<button type="button" class="btn btn-outline-secondary btn-sm reply-comment-btn" data-comment-id="' + c.id + '" data-target="reply-form-' + c.id + '" title="Répondre">' +
+            '<i class="bi bi-chat-dots"></i>' +
+            '</button>' : '') +
+        '<button type="button" class="btn btn-sm like-comment-btn" data-id="' + c.id + '" aria-pressed="false">' +
+        '<i class="bi bi-heart"></i> ' +
+        '<span id="like-count-comment-' + c.id + '">' + (c.likesCount || 0) + '</span>' +
+        '</button>' +
+        '</div>' +
+        (document.body.dataset.logged === '1' ? 
+            '<form id="reply-form-' + c.id + '" class="mt-2 reply-comment-form" style="display:none;">' +
+            '<input type="hidden" name="parent_id" value="' + c.id + '">' +
+            '<div class="mb-2">' +
+            '<textarea name="comment_text" rows="2" class="form-control" placeholder="Votre réponse..."></textarea>' +
+            '</div>' +
+            '<button type="submit" class="btn btn-outline-secondary btn-sm">Envoyer</button>' +
+            '</form>' : '') +
+        '<div id="children-' + c.id + '" class="mt-2 ps-3" style="border-left: 2px solid #e5e7eb;"></div>' +
+        '</div>';
+    
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    return wrapper.firstElementChild;
 }
 
 document.body.dataset.logged = '{{ app.user ? 1 : 0 }}';

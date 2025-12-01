@@ -69,10 +69,14 @@
                                                             <span class="me-2">{{ user.username }}</span>
                                                             <form action="{{ path('supprimer_acces_carnet', { 'carnetId': carnet.id, 'userId': user.id }) }}" 
                                                                 method="post" 
-                                                                class="d-inline" 
-                                                                onsubmit="return confirm('Êtes-vous sûr de vouloir retirer l\\'accès à cet utilisateur ?');">
+                                                                class="d-inline form-suppression" 
+                                                                id="form-suppression-{{ carnet.id }}-{{ user.id }}">
                                                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ carnet.id ~ user.id) }}">
-                                                                <button type="submit" class="btn btn-sm btn-outline-danger p-0 px-1" title="Retirer l'accès">
+                                                                <button type="button" 
+                                                                    class="btn btn-sm btn-outline-danger p-0 px-1 btn-supprimer-acces" 
+                                                                    title="Retirer l'accès"
+                                                                    data-username="{{ user.username }}"
+                                                                    data-carnet="{{ carnet.titre }}">
                                                                     <i class="fas fa-times"></i>
                                                                 </button>
                                                             </form>
@@ -90,7 +94,26 @@
 			</div>
 		</section>
 
-		<script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Gestionnaire de clic pour tous les boutons de suppression
+                document.querySelectorAll('.btn-supprimer-acces').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const username = this.getAttribute('data-username');
+                        const carnet = this.getAttribute('data-carnet');
+                        const form = this.closest('form');
+                        
+                        // Afficher la boîte de dialogue de confirmation
+                        if (confirm(`Êtes-vous sûr de vouloir retirer l'accès à ${username} pour le carnet "${carnet}" ?`)) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        </script>
+        <script>
 			document.querySelector('#form-partage').addEventListener('submit', async (e) => {
 e.preventDefault();
 

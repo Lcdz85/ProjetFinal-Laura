@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le carnet - {{ carnet.titre }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('styles/nouveauCarnetPost.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<main>
+    <h1>Modifier le carnet</h1>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            {% for field in form %}
+                                {% if field.vars.name != '_token' and field.vars.name != 'submit' %}
+                                    <div class="mb-3">
+                                        {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(field, {'attr': {'class': 'form-control' ~ (field.vars.valid ? '' : ' is-invalid')}}) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(field) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Enregistrer les modifications
+                                </button>
+                                <a href="{{ path('page_afficher_carnet', {'id': carnet.id}) }}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
