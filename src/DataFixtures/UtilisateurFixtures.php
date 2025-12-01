@@ -36,7 +36,7 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
                         ->setPassword($this->hasher->hashPassword($utilisateur, 'Password'.$i));
             
             // Carnets créés par l'utilisateur
-            $creesRefs = array_splice($allCarnets, 0, rand(0,5));
+            $creesRefs = array_splice($allCarnets, 0, rand(1,5));
             foreach ($creesRefs as $ref) {
                 $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
                 $utilisateur->addCarnetCree($carnet); 
@@ -47,7 +47,7 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
             // Carnets accessibles (≠ carnets créés)
             $carnetsRestants = array_diff($allCarnets, $creesRefs);
             shuffle($carnetsRestants);
-            $carnetsAccesRefs = array_slice($carnetsRestants, 0, rand(0,3));
+            $carnetsAccesRefs = array_slice($carnetsRestants, 0, rand(1,3));
             foreach ($carnetsAccesRefs as $ref) {
                 $carnet = $this->getReference('carnet_' . $ref, Carnet::class);
                 $utilisateur->addCarnetAcces($carnet);
