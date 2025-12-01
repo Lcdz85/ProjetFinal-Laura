@@ -211,17 +211,20 @@ hr{
     box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Style du bouton Publier */
-#post-comment-form-25 .btn-primary,
+/* Style des boutons de formulaire */
+.post-comment-form .btn-primary,
 .reply-comment-form .btn-outline-secondary {
-    background-color: transparent !important;
+    background-color: #665a4a !important;
     color: white !important;
-    border-color: white !important;
+    border: none !important;
+    padding: 0.25rem 0.75rem !important;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
 }
 
-#post-comment-form-25 .btn-primary:hover,
+.post-comment-form .btn-primary:hover,
 .reply-comment-form .btn-outline-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: #7a6c5a !important;
     color: white !important;
 }
 
@@ -262,9 +265,22 @@ hr{
     gap: 5px;
     box-shadow: none !important;
     outline: none !important;
-    /* margin-left: 10px; */
 }
 
+/* Style pour le bouton Envoyer des formulaires de réponse */
+.reply-comment-form .btn-outline-secondary {
+    background-color: #665a4a !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.25rem 0.75rem !important;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+.reply-comment-form .btn-outline-secondary:hover {
+    background-color: #7a6c5a !important;
+    color: white !important;
+}
 
 /* Styles pour les éléments de la carte */
 #map-view {
